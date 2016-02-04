@@ -1,0 +1,37 @@
+{
+  "name": "pantry-app",
+  "version": "1.0.0",
+  "description": "An app for managing your food, groceries, kitchen items.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sfrieson/PantryApp.git"
+  },
+  "keywords": [
+    "pantry",
+    "groceries",
+    "food",
+    "list",
+    "spices"
+  ],
+  "author": "Steven Frieson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sfrieson/PantryApp/issues"
+  },
+  "homepage": "https://github.com/sfrieson/PantryApp#readme",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "cookie-parser": "^1.4.1",
+    "dotenv": "^2.0.0",
+    "ejs": "^2.4.1",
+    "express": "^4.13.4",
+    "kerberos": "0.0.18",
+    "mongoose": "^4.3.7",
+    "morgan": "^1.6.1",
+    "pg-native": "^1.10.0"
+  }
+}
