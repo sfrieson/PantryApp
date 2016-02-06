@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/sfrieson/PantryApp#readme",
   "dependencies": {
+    "bcryptjs": "^2.3.0",
     "body-parser": "^1.14.2",
     "cookie-parser": "^1.4.1",
     "dotenv": "^2.0.0",
@@ -32,6 +33,6 @@
     "kerberos": "0.0.18",
     "mongoose": "^4.3.7",
     "morgan": "^1.6.1",
-    "pg-native": "^1.10.0"
+    "pg": "^4.4.1"
   }
 }

@@ -1,21 +1,23 @@
 // ======================= BASELINE =======================
-var express = require('express');
-var app = express();
+var express = require('express'),
+    app = express();
 
 //connect pg?
 // var pg = require('pg-native');
 
 
 // ======================= MIDDLEWARES =======================
-var morgan = require('morgan');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var dotenv = require('dotenv');
+var morgan          = require('morgan'),
+    bodyParser      = require('body-parser'),
+    cookieParser    = require('cookie-parser'),
+    dotenv          = require('dotenv'),
+    ejs             = require('ejs');
 
 // Middleware for checking user is logged in before viewing page.
 
 app.use(morgan('dev'));
-app.set(express.static(__dirname + "/public"));
+app.set(express.static("./public"));
+app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
@@ -23,6 +25,7 @@ app.use(cookieParser());
 
 // ======================= ROUTING =======================
 var index = require('./routers/index');
+
 app.use('/', index);
 
 

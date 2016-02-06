@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign-up</title>
+</head>
+<body>
+    <h1>Sign up!</h1>
+    <form action="/signup" method="post">
+        <input type="text" name="account[username]" placeholder="Username">
+        <input type="password" name="account[password]" placeholder="Password">
+        <input type="submit">
+    </form>
+
+    <h1>...or Log In</h1>
+    <form action="/login" method="post">
+        <input type="text" name="account[username]">
+        <input type="password" name="account[password]">
+        <input type="submit">
+    </form>
+</body>
+</html>
