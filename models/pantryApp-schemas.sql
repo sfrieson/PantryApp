@@ -4,9 +4,10 @@ CREATE TABLE accounts (
     passwordhash VARCHAR,
     team_id INTEGER, --If there is an id, it's a user.  If there isn't. it's a team.
     type VARCHAR(12), --Admin, team leader, user, team
+    token VARCHAR(256),
 
-    created_at TIMESTAMP WITH TIME ZONE,
-    updated_at TIMESTAMP WITH TIME ZONE
+    created_at BIGINT,
+    updated_at BIGINT
 );
 ALTER TABLE accounts ADD CONSTRAINT fk_team_account FOREIGN KEY (team_id) REFERENCES accounts(id);
 
@@ -20,8 +21,8 @@ CREATE TABLE lists (
     type VARCHAR(24), --inventory or list
     -- category VARCHAR(24),
 
-    created_at TIMESTAMP WITH TIME ZONE,
-    updated_at TIMESTAMP WITH TIME ZONE
+    created_at BIGINT,
+    updated_at BIGINT
 );
 
 CREATE TABLE list_items (
@@ -32,8 +33,8 @@ CREATE TABLE list_items (
     qty NUMERIC, --number needed
     category VARCHAR(30), --where in the store: dairy, meat, appliance
 
-    created_at TIMESTAMP WITH TIME ZONE,
-    updated_at TIMESTAMP WITH TIME ZONE
+    created_at BIGINT,
+    updated_at BIGINT
 );
 
 
