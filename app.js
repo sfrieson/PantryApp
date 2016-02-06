@@ -11,19 +11,17 @@ var morgan          = require('morgan'),
     bodyParser      = require('body-parser'),
     cookieParser    = require('cookie-parser'),
     dotenv          = require('dotenv'),
-    ejs             = require('ejs')
+    // ejs             = require('ejs'),
     loadUser        = require('./middlewares/loaduser');
 
 // Middleware for checking user is logged in before viewing page.
 
 app.use(morgan('dev'));
-app.set(express.static("./public"));
-app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(loadUser);
-
+app.use(express.static("./public/"));
 
 // ======================= ROUTING =======================
 var index = require('./routers/index');
