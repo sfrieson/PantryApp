@@ -2,30 +2,36 @@ CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
     name VARCHAR(30),
     passwordhash VARCHAR,
-    type VARCHAR(16), --maybe PK referencing a table for each. user, team
+    team_id INTEGER, --If there is an id, it's a user.  If there isn't. it's a team.
+    type VARCHAR(12), --Admin, team leader, user, team
+
     created_at TIMESTAMP WITH TIME ZONE,
     updated_at TIMESTAMP WITH TIME ZONE
-    --priviledge --Admin, team leader, user
 );
+ALTER TABLE accounts ADD CONSTRAINT fk_team_account FOREIGN KEY (team_id) REFERENCES accounts(id);
+
 
 CREATE TABLE lists (
     id SERIAL PRIMARY KEY,
-    account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE,
-    type VARCHAR(24), --maybe PK referencing a table for each. Inventory, grocery list
-    name VARCHAR(24),
+    account_id INTEGER REFERENCES accounts(id) ON DELETE CASCADE NOT NULL, --Creator of list
+    team_id INTEGER REFERENCES accounts(id), --null if private list. value if team list
+    name VARCHAR(30),
     description TEXT,
-    category VARCHAR(24),
+    type VARCHAR(24), --inventory or list
+    -- category VARCHAR(24),
+
     created_at TIMESTAMP WITH TIME ZONE,
     updated_at TIMESTAMP WITH TIME ZONE
 );
 
 CREATE TABLE list_items (
     id SERIAL PRIMARY KEY,
-    list_id REFERENCES lists(id) ON DELETE CASCADE,
-    food_des REFERENCES food_des(nbd_no),
-    status VARCHAR(10),
-    qty NUMERIC,
-    category VARCHAR(24),
+    list_id INTEGER REFERENCES lists(id) ON DELETE CASCADE,
+    food_des VARCHAR REFERENCES food_des(nbd_no),
+    status VARCHAR(10), --'still needed', 'in basket', 'not important'
+    qty NUMERIC, --number needed
+    category VARCHAR(30), --where in the store: dairy, meat, appliance
+
     created_at TIMESTAMP WITH TIME ZONE,
     updated_at TIMESTAMP WITH TIME ZONE
 );
@@ -58,3 +64,13 @@ CREATE TABLE list_items (
 -- );
 --
 -- -------------------------------------------------------------------------------
+
+
+-- -- In-table heirarchy (NOT PSQL)
+-- create table Employees (
+--  EmployeeID int identity primary key,
+--  EmployeeName varchar(50),
+--  ManagerID int
+-- );
+--
+-- ALTER TABLE Employees ADD Constraint fk_Manager_Employee Foreign key (managerID) references Employees(EmployeeID);
