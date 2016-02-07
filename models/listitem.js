@@ -14,9 +14,9 @@ ListItem.add = function (list, item, callback) {
         item.status = list.type === "inventory" ? "In inventory." : "Needed";
         item.qty = item.qty || 1;
 
-        var text="INSERT INTO listitems (list_id, name, description, food_des, status, qty, category, created_at, updated_at) " +
+        var text="INSERT INTO listitems (list_id, name, notes, food_des, status, qty, category, created_at, updated_at) " +
         "VALUES $1, $2, $3, $4, $5, $6, $7, $8, $9 RETURNING *";
-        var values = [list_id, item.name, item.desc, item.status, item.qty, category, now, now];
+        var values = [list_id, item.name, item.notes, item.status, item.qty, category, now, now];
         client.query(text, values, function(err, response){
             done();
             if(err) return callback({message:"Insert error", error: err});

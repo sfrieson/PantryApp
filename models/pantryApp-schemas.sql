@@ -29,7 +29,7 @@ CREATE TABLE list_items (
     id SERIAL PRIMARY KEY,
     list_id INTEGER REFERENCES lists(id) ON DELETE CASCADE,
     name VARCHAR(30), -- may be same as food_des
-    description TEXT,
+    notes TEXT, -- notes for user
     food_des VARCHAR REFERENCES food_des(nbd_no),
     status VARCHAR(10), --'still needed', 'in basket', 'not important'
     qty NUMERIC, --number needed

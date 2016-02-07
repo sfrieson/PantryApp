@@ -11,4 +11,6 @@ function($scope, $http, $cookies){
             $cookies.put('pantry_app', user.token);
         });
     };
+
+    
 }]);
