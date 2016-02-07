@@ -6,27 +6,47 @@ var crypto = require('crypto');
 
 var Account = {};
 
+Account.team = function(user, newTeam, callback){
+    pg.connect(connection, function(err, client, done) {
+        if(err){return callback(err);}
+        console.log("PG: Connected");
+
+        var now = Date.now();
+        var hash = bcrypt.hashSync(newAcct.password, 8); //fake password for team for inviting other members
+
+        //create team account
+        var text = 'INSERT INTO accounts(name, passwordhash, type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+        client.query(text, [newTeam.name, hash, "team", now, now], function(err, result){
+            if(err){return callback(err);}
+            console.log("PG: User Created");
+            newTeam = result.rows[0];
+
+            //update user to reflect team
+            var text = "UPDATE accounts SET team_id = $1, updated_at = $2 WHERE id = $3";
+            client.query(text, [newTeam.id, now, user.id], function(err, response){
+                done();
+                if (err) {console.log(err);}
+                console.log("PG: Token written");
+            });
+            //Success!
+            callback(null, newTeam);
+        });
+    });
+};
+
 Account.new = function(newAcct, callback) {
     pg.connect(connection, function(err, client, done) {
         if(err){return callback(err);}
         console.log("PG: Connected");
 
         var now = Date.now();
-        var hash = bcrypt.hashSync(newAcct.password, 8);
+        var buffer = (crypto.randomBytes(128)).toString('hex');
 
-        var text = 'INSERT INTO accounts(name, passwordhash, created_at, updated_at) VALUES ($1, $2, $3, $4)';
-        client.query(text, [newAcct.username, hash, now, now], function(err, result){
+        var text = 'INSERT INTO accounts(name, passwordhash, type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING *';
+        client.query(text, [newAcct.username, buffer, "user", now, now], function(err, result){
             if(err){return callback(err);}
             console.log("PG: User Created");
-
-            var text = "SELECT * FROM accounts ORDER BY created_at DESC LIMIT 1";
-            client.query(text, function(error, response){
-                done();
-                if(error){return callback(error);}
-
-                //Success!
-                callback(null, response.rows[0]);
-            });
+            callback(null, result.rows[0]);
         });
     });
 };
@@ -50,6 +70,7 @@ Account.login = function(credentials, callback) {
                 var buffer = (crypto.randomBytes(128)).toString('hex');
 
                 result.rows[0].token = buffer;
+
                 var text = "UPDATE accounts SET token = $1 WHERE id = $2 ";
                 client.query(text, [buffer, result.rows[0].id], function(err, response){
                     done();
@@ -70,7 +91,7 @@ Account.findByToken = function(token, callback){
         console.log("PG: Connection");
 
         var text = 'SELECT * FROM accounts WHERE token LIKE $1';
-        client.query(text, [token], function(err, result){
+        client.query(text, [token.toString('hex')], function(err, result){
             done();
             if(err){return callback({message: "Token not found", error: err});}
             console.log("PG: User found by Token");
