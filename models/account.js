@@ -118,6 +118,19 @@ Account.findByToken = function(token, callback){
         });
     });
 };
+Account.findById = function(id, callback){
+    pg.connect(connection, function(err, client, done){
+        console.log("PG.Account.findById: Connection");
+
+        var text = 'SELECT * FROM accounts WHERE id = $1';
+        client.query(text, [id], function(err, result){
+            done();
+            if(err){return callback({message: "ID not found", error: err});}
+            var user = result.rows[0];
+            callback(null, user);
+        });
+    });
+};
 
 // ------------------------------------------------
 // -------------------- UPDATE --------------------

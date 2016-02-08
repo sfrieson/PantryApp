@@ -4,11 +4,11 @@ var Account = require('../models/account');
 var publicDir = "/Users/sfrieson/code/wdi/PantryApp/public";
 
 router.get('/', function(req, res){
-    if(!req.user){
+    // if(!req.user){
         res.sendFile(publicDir + "/views/index.html");
-    } else {
-        res.sendFile(publicDir + "/views/user.html");
-    }
+    // } else {
+        // res.sendFile(publicDir + "/views/user.html");
+    // }
 
 });
 router.post('/signup', function(req, res){
@@ -19,8 +19,14 @@ router.post('/signup', function(req, res){
 });
 
 router.post('/login', function(req,res){
-    console.log("router, req.body", req.body);
     Account.login(req.body.user, function(err, user){
+        if(err) console.log(err);
+        res.json(user);
+    });
+});
+
+router.get('/token/:token', function(req,res){
+    Account.findByToken(req.params.token, function(err, user){
         if(err) console.log(err);
         res.json(user);
     });

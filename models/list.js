@@ -38,13 +38,13 @@ List.newInventory = function(account, callback){
 // ----------------------------------------------
 // -------------------- READ --------------------
 // ----------------------------------------------
-List.getAll = function(account, callback){
+List.getAll = function(account_id, callback){
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message:"Connection error", error: err});
         console.log("PG.List.getAll: Connected");
 
         var text = "SELECT * FROM lists WHERE account_id = $1";
-        client.query(text, [account.id], function(err, result){
+        client.query(text, [account_id], function(err, result){
             done();
             if (err) return callback({message:"Select error", error: err});
             callback(null, result.rows);
