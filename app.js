@@ -25,11 +25,11 @@ app.use(express.static("./public/"));
 
 // ======================= ROUTING =======================
 var index = require('./routers/index');
+var lists = require('./routers/lists');
 
 app.use('/', index);
-app.get('/location', function(req, res){
-    res.send("hello");
-})
+app.use('/lists', lists);
+
 
 
 

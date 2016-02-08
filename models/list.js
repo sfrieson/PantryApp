@@ -17,7 +17,7 @@ List.new = function(account, list, callback, type){
 
         var text="INSERT INTO lists (account_id, team_id, name, description, type, created_at, updated_at) " +
         "VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
-        var values = [account.id, account.team, list.name, list.desc, type, now, now];
+        var values = [account.id, account.team_id, list.name, list.desc, type, now, now];
         client.query(text, values, function(err, response){
             done();
             if(err) return callback({message:"Insert error", error: err});
@@ -51,16 +51,20 @@ List.getAll = function(account, callback){
         });
     });
 };
-List.getOne = function(list, callback){
+List.get = function(list_id, callback){
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message:"Connection error", error: err});
         console.log("PG.List.getOne: Connected");
 
         var text = "SELECT * FROM lists WHERE id = $1";
-        client.query(text, [list.id], function(err, result){
+        client.query(text, [list_id], function(err, result){
             done();
             if (err) return callback({message:"Select error", error: err});
-            callback(null, result.rows[0]);
+            var list = result.rows[0];
+            ListItem.get(list, function(err, result){
+                list.items = result;
+                callback(null, list);
+            });
         });
     });
 };
@@ -136,7 +140,7 @@ List.delete = function (list, callback) {
 // ----------------------------------------------------
 List.addItem = function(list, item, callback) {
     ListItem.add(list, item, function(err, response){
-
+        callback(err, response);
     });
 };
 

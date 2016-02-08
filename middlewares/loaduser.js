@@ -5,12 +5,8 @@ var loadUser = function(req, res, next){
     if (token) {
         Account.findByToken(token, function(err, user){
             req.user = user;
-            console.log("Here's your token, sir...", token);
             next();
         });
     }else { next();}
-
-
-
 };
 module.exports = loadUser;

@@ -15,8 +15,8 @@ ListItem.add = function (list, item, callback) {
         item.qty = item.qty || 1;
 
         var text="INSERT INTO list_items (list_id, name, notes, food_des, status, qty, category, created_at, updated_at) " +
-        "VALUES $1, $2, $3, $4, $5, $6, $7, $8, $9 RETURNING *";
-        var values = [list.id, item.name, item.notes, item.status, item.qty, category, now, now];
+        "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";
+        var values = [list.id, item.name, item.notes, null, item.status, item.qty, item.category, now, now];
         client.query(text, values, function(err, response){
             done();
             if(err) return callback({message:"Insert error", error: err});
@@ -28,7 +28,7 @@ ListItem.add = function (list, item, callback) {
 // ----------------------------------------------
 // -------------------- READ --------------------
 // ----------------------------------------------
-ListItem.getAll = function(list, callback){
+ListItem.get = function(list, callback){
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message:"Connection error", error: err});
         console.log("PG.ListItems: Connected");
