@@ -36,8 +36,8 @@
                 Lists:
                 <ul>
                     <li><a href="#" ng-click="show = 'new list'">New List</a></li>
-                    <li ng-repeat="list in lists" ng-click="getList(list.id)">
-                        {{list.name}}
+                    <li ng-repeat="list in lists">
+                        <span ng-click="getList(list.id)">{{list.name}}</span> <a href="#" ng-if="list.type !=='inventory'" ng-click="deleteList(list.id)">x</a>
                     </li>
                 </ul>
             </div>
@@ -56,7 +56,7 @@
                 </form>
                 <ul>
                     <li class="items" ng-repeat="item in list.items">
-                        {{item.qty}} - {{item.name}}
+                        {{item.qty}} - {{item.name}} <a href="#" ng-click="deleteListItem(item.id)">x</a>
                     </li>
                 </ul>
             </div>

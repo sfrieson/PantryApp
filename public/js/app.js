@@ -5,9 +5,8 @@ app.controller("MainController", ['$scope', '$http', '$cookies',
 function($scope, $http, $cookies){
     var token = $cookies.get('pantry_app_t');
     $http.get('/token/' + token  ).then(function(response){
-        console.log(response.data);
         $scope.user = response.data;
-    }); //{token: $cookies.get('pantry_app_t'), id: $cookies.get('pantry_app_id')}
+    });
     $scope.credentials = {};
     $scope.show = "lists";
     $scope.header="Well, howdy there...";
@@ -33,11 +32,19 @@ function($scope, $http, $cookies){
             $scope.show="list";
         });
     };
+    $scope.deleteList = function (id) {
+        $http.delete('/lists/'+id).then(function(response){
+            console.log(response);
+        });
+    };
     $scope.addListItem = function ( ){
-        $http.post('/lists/item', {list: $scope.list, listItem: $scope.newListItem}).then(function(response){
+        $http.post('/lists/items', {list: $scope.list, listItem: $scope.newListItem}).then(function(response){
             $scope.list.items.push(response.data.item);
             $scope.newListItem = {};
         });
+    };
+    $scope.deleteListItem = function(id) {
+        $http.delete('/lists/items/' + id).then(function(response){console.log(response);});
     };
     $scope.addList = function() {
         $http.post('/lists', {list: $scope.newList}).then(function(response){

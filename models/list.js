@@ -38,13 +38,13 @@ List.newInventory = function(account, callback){
 // ----------------------------------------------
 // -------------------- READ --------------------
 // ----------------------------------------------
-List.getAll = function(account_id, callback){
+List.getAll = function(account, callback){
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message:"Connection error", error: err});
         console.log("PG.List.getAll: Connected");
 
         var text = "SELECT * FROM lists WHERE account_id = $1";
-        client.query(text, [account_id], function(err, result){
+        client.query(text, [account.id], function(err, result){
             done();
             if (err) return callback({message:"Select error", error: err});
             callback(null, result.rows);
@@ -122,15 +122,15 @@ List.moveInventory = function (currentOwner, newOwner, callback){
 // -------------------------------------------------
 // -------------------- DESTROY --------------------
 // -------------------------------------------------
-List.delete = function (list, callback) {
+List.delete = function (list_id, callback) {
     pg.connect(connection, function(err, client, done) {
         if(err){callback({message: "Connection Error:", error: err});}
         console.log("PG.List.delete: Connected");
 
-        client.query('DELETE FROM lists WHERE id = $1', [list.id], function(err, response){
+        client.query('DELETE FROM lists WHERE id = $1', [list_id], function(err, response){
             done();
             if(err) callback({error: err});
-            callback(null, {message: "List" + list.name + "is deleted", response: response});
+            callback(null, {message: "List is deleted", response: response});
         });
     });
 };

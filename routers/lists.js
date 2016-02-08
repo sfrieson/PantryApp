@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var List = require('../models/list');
+var ListItem = require('../models/listitem');
 var publicDir = "/Users/sfrieson/code/wdi/PantryApp/public";
 
 router.get('/', function(req,res){
@@ -13,17 +14,30 @@ router.get('/:id', function(req,res){
         res.json({list:response});
     });
 });
+router.delete('/:id', function(req,res){
+    List.delete(req.params.id, function(err, response){
+        res.json(response);
+    });
+});
+
 router.post('/', function(req, res){
     List.new(req.user, req.body.list, function(err, response){
         res.json({list:response});
     });
 });
-router.post('/item', function(req, res){
+router.post('/items', function(req, res){
     List.addItem(req.body.list, req.body.listItem, function(err, response){
         if (err) {
             console.log({error: err});
         }
         res.json({item:response});
+    });
+});
+router.delete('/items/:id', function(req,res){
+    console.log("Deleting");
+    ListItem.delete(req.params.id, function(err, response){
+        if(err) console.log(err);
+        res.json({list:response});
     });
 });
 

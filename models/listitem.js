@@ -62,15 +62,15 @@ ListItem.switchList = function(item, targetList, callback){
 // -------------------------------------------------
 // -------------------- DESTROY --------------------
 // -------------------------------------------------
-ListItem.delete = function (listItem, callback) {
+ListItem.delete = function (listItem_id, callback) {
     pg.connect(connection, function(err, client, done) {
         if(err){callback({message: "Connection Error:", error: err});}
         console.log("PG.List: Connected");
 
-        client.query('DELETE FROM listitemss WHERE id = $1', [listItem.id], function(err, response){
+        client.query('DELETE FROM list_items WHERE id = $1', [listItem_id], function(err, response){
             done();
             if(err) callback({error: err});
-            callback(null, {message: "List Item" + listItem.name + "is deleted", response: response});
+            callback(null, {message: "List Item is deleted", response: response});
         });
     });
 };
