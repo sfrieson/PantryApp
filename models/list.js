@@ -138,6 +138,23 @@ List.delete = function (list, callback) {
 // ----------------------------------------------------
 // -------------------- LIST ITEMS --------------------
 // ----------------------------------------------------
+List.getItems = function(list_id, callback) {
+    pg.connect(connection, function(err, client, done) {
+        if(err){callback({message: "Connection Error:", error: err});}
+        console.log("PG.List.getItems: Connected");
+
+        var text = "WITH all_items AS (" +
+            "SELECT list_id, name, notes, status, qty FROM list_items" +
+        ")" +
+        "SELECT * FROM all_items WHERE list_id = $1;";
+        client.query(text, [list_id], function(err, response){
+            done();
+            if(err) callback({error: err});
+            callback(null, {message: "List" + list.name + "is deleted", response: response});
+        });
+    });
+};
+
 List.addItem = function(list, item, callback) {
     ListItem.add(list, item, function(err, response){
         callback(err, response);
