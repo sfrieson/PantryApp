@@ -14,9 +14,9 @@ ListItem.add = function (list, item, callback) {
         item.status = list.type === "inventory" ? "In inventory." : "Needed";
         item.qty = item.qty || 1;
 
-        var text="INSERT INTO listitems (list_id, name, notes, food_des, status, qty, category, created_at, updated_at) " +
+        var text="INSERT INTO list_items (list_id, name, notes, food_des, status, qty, category, created_at, updated_at) " +
         "VALUES $1, $2, $3, $4, $5, $6, $7, $8, $9 RETURNING *";
-        var values = [list_id, item.name, item.notes, item.status, item.qty, category, now, now];
+        var values = [list.id, item.name, item.notes, item.status, item.qty, category, now, now];
         client.query(text, values, function(err, response){
             done();
             if(err) return callback({message:"Insert error", error: err});
@@ -33,7 +33,7 @@ ListItem.getAll = function(list, callback){
         if(err) return callback({message:"Connection error", error: err});
         console.log("PG.ListItems: Connected");
 
-        var text = "SELECT * FROM listitems WHERE list_id = $1";
+        var text = "SELECT * FROM list_items WHERE list_id = $1";
         client.query(text, [list.id], function(err, result){
             done();
             if (err) return callback({message:"Select error", error: err});
@@ -51,7 +51,7 @@ ListItem.switchList = function(item, targetList, callback){
         console.log("PG.ListItem: Connected");
 
         var newStatus = targetList.type == "inventory" ? "In inventory." : "Needed";
-        var text = "UPDATE listitems WHERE id= $1 SET id = $2 status LIKE $3'";
+        var text = "UPDATE list_items WHERE id= $1 SET id= $2, status= $3'";
         client.query(text, [list.id, targetList.id, newStatus], function(err){
             done();
             if(err) return callback({message:"Select error", error: err});

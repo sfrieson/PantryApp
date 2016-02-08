@@ -14,20 +14,25 @@ var List = require('./list.js');
 Account.new = function(newAcct, callback) {
     pg.connect(connection, function(err, client, done) {
         if(err){return callback(err);}
-        console.log("PG.Account: Connected");
+        console.log("PG.Account.new: Connected");
 
         var now = Date.now();
-        var buffer = (crypto.randomBytes(128)).toString('hex');
+        var hash = bcrypt.hashSync(newAcct.password, 8);
+
 
         var text = 'INSERT INTO accounts(name, passwordhash, type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-        client.query(text, [newAcct.username, buffer, "user", now, now], function(err, result){
+        client.query(text, [newAcct.username, hash, "user", now, now], function(err, result){
             if(err){return callback(err);}
             console.log("PG.Account: User Created");
             user = result.rows[0];
+
             callback(null, user);
 
             //If this user has no team, create an inventory for them.
-            if(!user.team_id) List.newInventory(user.id);
+            if(!user.team_id) List.newInventory(user, function(err, response){
+                if(err)return console.log(err);
+                console.log(response);
+            });
         });
     });
 };
@@ -35,14 +40,14 @@ Account.new = function(newAcct, callback) {
 Account.team = function(user, newTeam, callback){
     pg.connect(connection, function(err, client, done) {
         if(err){return callback(err);}
-        console.log("PG.Account: Connected");
+        console.log("PG.Account.team: Connected");
 
         var now = Date.now();
-        var hash = bcrypt.hashSync(newAcct.password, 8); //fake password for team for inviting other members
+        var buffer = (crypto.randomBytes(128)).toString('hex');//fake password for team for inviting other members
 
         //create team account
         var text = 'INSERT INTO accounts(name, passwordhash, type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-        client.query(text, [newTeam.name, hash, "team", now, now], function(err, result){
+        client.query(text, [newTeam.name, buffer, "team", now, now], function(err, result){
             if(err){return callback(err);}
             console.log("PG.Account: User Created");
             newTeam = result.rows[0];
@@ -68,8 +73,8 @@ Account.team = function(user, newTeam, callback){
 Account.login = function(credentials, callback) {
     pg.connect(connection, function(err, client, done) {
         if(err){return {message:"Connection Error:", error: err};}
-        console.log("PG.Account: Connected");
-
+        console.log("PG.Account.login: Connected");
+        console.log(credentials);
         // var hash = bcrypt.hashSync(logIn.password, 8);
 
         var text = 'SELECT * FROM accounts WHERE name LIKE $1';
@@ -77,7 +82,6 @@ Account.login = function(credentials, callback) {
             if(err){return callback({message: "incorrect username", error: err});}
             console.log("PG.Account: User found");
             var user = result.rows[0];
-
 
             if(bcrypt.compareSync(credentials.password, user.passwordhash)){
                 //Password matches! Now create a token.
@@ -102,7 +106,7 @@ Account.login = function(credentials, callback) {
 
 Account.findByToken = function(token, callback){
     pg.connect(connection, function(err, client, done){
-        console.log("PG.Account: Connection");
+        console.log("PG.Account.findByToken: Connection");
 
         var text = 'SELECT * FROM accounts WHERE token LIKE $1';
         client.query(text, [token.toString('hex')], function(err, result){
@@ -121,7 +125,7 @@ Account.findByToken = function(token, callback){
 Account.update = function(account, edited, callback){
     pg.connect(connection, function(err, client, done){
         if(err){callback({message: "Connection Error:", error: err});}
-        console.log("PG.Account: Connected");
+        console.log("PG.Account.update: Connected");
 
         var now = Date.now();
         var text = "UPDATE accounts SET name = $2, type = $3, updated_at = $4 WHERE id = $1 ";
@@ -140,7 +144,7 @@ Account.update = function(account, edited, callback){
 Account.delete = function (account, callback) {
     pg.connect(connection, function(err, client, done) {
         if(err){callback({message: "Connection Error:", error: err});}
-        console.log("PG.Account: Connected");
+        console.log("PG.Account.delete: Connected");
 
         client.query('DELETE FROM accounts WHERE id = $1 CASCADE', [account.id], function(err, response){
             done();
@@ -155,6 +159,7 @@ Account.delete = function (account, callback) {
 // -------------------- LIST --------------------
 // ----------------------------------------------
 Account.lists = function(account) {
+    console.log("Account.lists...");
     List.getAll(account, function(response){
         return response;
     });

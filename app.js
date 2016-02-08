@@ -2,8 +2,7 @@
 var express = require('express'),
     app = express();
 
-//connect pg?
-// var pg = require('pg-native');
+
 
 
 // ======================= MIDDLEWARES =======================
@@ -11,7 +10,7 @@ var morgan          = require('morgan'),
     bodyParser      = require('body-parser'),
     cookieParser    = require('cookie-parser'),
     dotenv          = require('dotenv'),
-    ejs             = require('ejs'),
+    // ejs             = require('ejs'),
     loadUser        = require('./middlewares/loaduser');
 
 // Middleware for checking user is logged in before viewing page.
@@ -28,6 +27,9 @@ app.use(express.static("./public/"));
 var index = require('./routers/index');
 
 app.use('/', index);
+app.get('/location', function(req, res){
+    res.send("hello");
+})
 
 
 

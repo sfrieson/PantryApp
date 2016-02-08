@@ -1,10 +1,11 @@
 var Account = require('../models/account');
 
 var loadUser = function(req, res, next){
-    if (req.cookies.pantry_app) {
-        Account.findByToken(req.cookies.pantry_app, function(err, user){
+    var token = req.cookies.pantry_app_t;
+    if (token) {
+        Account.findByToken(token, function(err, user){
             req.user = user;
-            console.log("Here's your token, sir...", req.cookies.pantry_app);
+            console.log("Here's your token, sir...", token);
             next();
         });
     }else { next();}

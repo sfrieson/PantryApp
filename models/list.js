@@ -10,13 +10,13 @@ var ListItem = require("./listitem.js");
 List.new = function(account, list, callback, type){
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message:"Connection error", error: err});
-        console.log("PG.List: Connected");
+        console.log("PG.List.new: Connected");
 
         var now = Date.now();
         type = type || "list";
 
         var text="INSERT INTO lists (account_id, team_id, name, description, type, created_at, updated_at) " +
-        "VALUES $1, $2, $3, $4, $5, $6, $7 RETURNING *";
+        "VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
         var values = [account.id, account.team, list.name, list.desc, type, now, now];
         client.query(text, values, function(err, response){
             done();
@@ -27,6 +27,7 @@ List.new = function(account, list, callback, type){
     });
 };
 List.newInventory = function(account, callback){
+    console.log("List.newInventory.....");
     var list = {
         name: "Inventory",
         desc: "Everything that you currently own."
@@ -40,7 +41,7 @@ List.newInventory = function(account, callback){
 List.getAll = function(account, callback){
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message:"Connection error", error: err});
-        console.log("PG.List: Connected");
+        console.log("PG.List.getAll: Connected");
 
         var text = "SELECT * FROM lists WHERE account_id = $1";
         client.query(text, [account.id], function(err, result){
@@ -53,7 +54,7 @@ List.getAll = function(account, callback){
 List.getOne = function(list, callback){
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message:"Connection error", error: err});
-        console.log("PG.List: Connected");
+        console.log("PG.List.getOne: Connected");
 
         var text = "SELECT * FROM lists WHERE id = $1";
         client.query(text, [list.id], function(err, result){
@@ -66,7 +67,7 @@ List.getOne = function(list, callback){
 List.getInventory = function(user, callback){
     pg.connect(connection, function (err, client, done) {
         if(err) return callback({message:"Connection error", error: err});
-        console.log("PG.List: Connected");
+        console.log("PG.List.getInventory: Connected");
 
         var text = "SELECT * FROM lists WHERE id = $1, type LIKE 'inventory'";
         client.query(text, [user.id], function(err, result){
@@ -86,7 +87,7 @@ List.update = function(list, callback){
 List.changeOwner = function(list, newOwner, callback){
     pg.connect(connection, function (err, client, done) {
         if(err) return callback({message:"Connection error", error: err});
-        console.log("PG.List: Connected");
+        console.log("PG.List.changeOwner: Connected");
 
         var text = "UPDATE lists WHERE id= $1 SET id = $2 '";
         client.query(text, [list.id, newOwner.id], function(err){
@@ -100,9 +101,9 @@ List.changeOwner = function(list, newOwner, callback){
 List.moveInventory = function (currentOwner, newOwner, callback){
     pg.connect(connection, function (err, client, done) {
         if(err) return callback({message:"Connection error", error: err});
-        console.log("PG.List: Connected");
+        console.log("PG.List.moveInventory: Connected");
 
-        var text = "UPDATE lists WHERE account_id= $1, type LIKE 'inventory' SET id = $2 '";
+        var text = "UPDATE lists WHERE account_id= $1, type = 'inventory' SET id = $2 '";
         client.query(text, [currentOwner.id, newOwner.id], function(err){
             done();
             if(err) return callback({message:"Select error", error: err});
@@ -120,7 +121,7 @@ List.moveInventory = function (currentOwner, newOwner, callback){
 List.delete = function (list, callback) {
     pg.connect(connection, function(err, client, done) {
         if(err){callback({message: "Connection Error:", error: err});}
-        console.log("PG.List: Connected");
+        console.log("PG.List.delete: Connected");
 
         client.query('DELETE FROM lists WHERE id = $1', [list.id], function(err, response){
             done();
@@ -168,7 +169,7 @@ List.addItems = function(list, itemArr, callback) {
 
     pg.connect(function(err, client, done) {
         if(err) throw err;
-        console.log("PG.List: Connected");
+        console.log("PG.List.addItems: Connected");
 
         client.query('BEGIN', function(err) {
             if(err) return rollback(client, done);
