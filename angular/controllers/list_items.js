@@ -9,6 +9,7 @@ liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', 
     $scope.addListItem = function() {
         ListItem.create($scope.list, $scope.newListItem).then(function(response){
             $scope.list.items.push(response.data);
+            $scope.newListItem = {};
         });
     };
 

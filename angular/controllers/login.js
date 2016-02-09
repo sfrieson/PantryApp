@@ -5,6 +5,8 @@ ctrl.controller("LoginController", ['$scope', '$cookies', '$location', 'Auth', f
 
     $scope.login = function() {
         user = Auth.login($scope.credentials).then(function (response) {
+            $scope.credentials = {};
+            
             if(response.data.user){
             var user = response.data.user;
             console.log("putting cookies");
@@ -17,5 +19,5 @@ ctrl.controller("LoginController", ['$scope', '$cookies', '$location', 'Auth', f
         });
     };
 
-    
+
 }]);

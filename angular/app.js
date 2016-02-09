@@ -10,6 +10,10 @@ app.config(['$routeProvider', function( $routeProvider) {
             templateUrl: '/views/partials/lists.html',
             controller: "ListsController"
         })
+        .when('/lists/new', {
+            templateUrl: '/views/partials/new_list.html',
+            controller: "ListsController"
+        })
         .when('/lists/:id', {
             templateUrl: 'views/partials/list.html',
             controller: "ListItemsController"

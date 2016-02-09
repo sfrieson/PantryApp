@@ -1,7 +1,7 @@
 var listCtrl = angular.module("listsController", ['listsFactory']);
 
-listCtrl.controller('ListsController', ['$scope', '$http', 'List', function($scope, $http, List){
-    
+listCtrl.controller('ListsController', ['$scope', '$http', "$location", 'List', function($scope, $http, $location, List){
+
     List.getList().then(function(response){
         $scope.lists = response.data.lists;
     });
@@ -25,9 +25,10 @@ listCtrl.controller('ListsController', ['$scope', '$http', 'List', function($sco
         List.deleteListItem(id).then(function(response){console.log(response);});
     };
     $scope.addList = function(){
-        List.addList().then(function(response){
+        List.add($scope.newList).then(function(response){
             $scope.newList = {};
             $scope.lists.push(response.data.list);
+            $location.path('/lists');
         });
     };
 }]);

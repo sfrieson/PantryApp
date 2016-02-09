@@ -16,7 +16,7 @@ listModel.factory('List', ['$http', function($http){
     List.deleteListItem = function(id) {
         return $http.delete('/lists/items/' + id);
     };
-    List.addList = function(newList) {
+    List.add = function(newList) {
         return $http.post('/lists', {list: newList});
     };
     return List;

@@ -10,6 +10,10 @@ app.config(['$routeProvider', function( $routeProvider) {
             templateUrl: '/views/partials/lists.html',
             controller: "ListsController"
         })
+        .when('/lists/new', {
+            templateUrl: '/views/partials/new_list.html',
+            controller: "ListsController"
+        })
         .when('/lists/:id', {
             templateUrl: 'views/partials/list.html',
             controller: "ListItemsController"
@@ -30,6 +34,7 @@ liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', 
     $scope.addListItem = function() {
         ListItem.create($scope.list, $scope.newListItem).then(function(response){
             $scope.list.items.push(response.data);
+            $scope.newListItem = {};
         });
     };
 
@@ -43,8 +48,8 @@ liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', 
 
 var listCtrl = angular.module("listsController", ['listsFactory']);
 
-listCtrl.controller('ListsController', ['$scope', '$http', 'List', function($scope, $http, List){
-    
+listCtrl.controller('ListsController', ['$scope', '$http', "$location", 'List', function($scope, $http, $location, List){
+
     List.getList().then(function(response){
         $scope.lists = response.data.lists;
     });
@@ -68,9 +73,10 @@ listCtrl.controller('ListsController', ['$scope', '$http', 'List', function($sco
         List.deleteListItem(id).then(function(response){console.log(response);});
     };
     $scope.addList = function(){
-        List.addList().then(function(response){
+        List.add($scope.newList).then(function(response){
             $scope.newList = {};
             $scope.lists.push(response.data.list);
+            $location.path('/lists');
         });
     };
 }]);
@@ -82,6 +88,8 @@ ctrl.controller("LoginController", ['$scope', '$cookies', '$location', 'Auth', f
 
     $scope.login = function() {
         user = Auth.login($scope.credentials).then(function (response) {
+            $scope.credentials = {};
+            
             if(response.data.user){
             var user = response.data.user;
             console.log("putting cookies");
@@ -94,7 +102,7 @@ ctrl.controller("LoginController", ['$scope', '$cookies', '$location', 'Auth', f
         });
     };
 
-    
+
 }]);
 
 var ctrl = angular.module("mainController", ['accountService']);
@@ -136,9 +144,9 @@ var authService = angular.module("authService", ['ngCookies']);
 
 authService.factory('Auth', ['$http', '$cookies', function($http, $cookies){
     var Auth = {};
-
+    
     Auth.login = function (credentials){
-        return $http.post('/login', {user: credentials})
+        return $http.post('/login', {user: credentials});
     };
 
     return Auth;
@@ -181,7 +189,7 @@ listModel.factory('List', ['$http', function($http){
     List.deleteListItem = function(id) {
         return $http.delete('/lists/items/' + id);
     };
-    List.addList = function(newList) {
+    List.add = function(newList) {
         return $http.post('/lists', {list: newList});
     };
     return List;
