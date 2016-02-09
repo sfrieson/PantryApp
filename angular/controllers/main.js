@@ -13,7 +13,6 @@ function($scope, $location, $cookies, Account){
 
     $scope.logout = function() {
         $cookies.remove('pantry_app_t');
-        $cookies.remove('pantry_app_id');
         $scope.setUser(null);
         $location.path('/login');
     };

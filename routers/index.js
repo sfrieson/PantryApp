@@ -1,10 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var Account = require('../models/account');
-var publicDir = "/Users/sfrieson/code/wdi/PantryApp/public";
 
 router.get('/', function(req, res){
-        res.sendFile(publicDir + "/views/index.html");
+        res.sendFile("views/index.html", {root: "./public"});
 });
 
 router.post('/signup', function(req, res){
