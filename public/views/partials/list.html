@@ -1,0 +1,18 @@
+<div id="list">
+    <a href="#/lists">All Lists</a><br />
+    Current List:
+    {{list.name}}<br />
+    {{list.description}}
+    <form ng-submit="addListItem()">
+        <input type="text" ng-model="newListItem.name" placeholder="name">
+        <input type="text" ng-model="newListItem.desc" placeholder="description">
+        <input type="number" ng-model="newListItem.qty" placeholder="quantity">
+        <input type="text" ng-model="newListItem.notes" placeholder="notes">
+        <input type="submit">
+    </form>
+    <ul>
+        <li class="items" ng-repeat="item in list.items">
+            {{item.qty}} - {{item.name}} <span ng-click="delete(item.id, $index)">x</span>
+        </li>
+    </ul>
+</div>

@@ -10,6 +10,11 @@
     <script src="js/app.js" charset="utf-8"></script>
 </head>
 <body ng-controller="MainController">
+    <header ng-if="user">
+        <button ng-click="logout()">logout</button>
+        <h1 >Hello, {{user.name}}!</h1>
+    </header>
+
 <section ng-view></section>
 
 

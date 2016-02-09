@@ -11,7 +11,7 @@ router.get('/', function(req,res){
 });
 router.get('/:id', function(req,res){
     List.get(req.params.id, function(err, response){
-        res.json({list:response});
+        res.json(response);
     });
 });
 router.delete('/:id', function(req,res){
@@ -30,7 +30,7 @@ router.post('/items', function(req, res){
         if (err) {
             console.log({error: err});
         }
-        res.json({item:response});
+        res.json(response);
     });
 });
 router.delete('/items/:id', function(req,res){

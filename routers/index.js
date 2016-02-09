@@ -4,13 +4,9 @@ var Account = require('../models/account');
 var publicDir = "/Users/sfrieson/code/wdi/PantryApp/public";
 
 router.get('/', function(req, res){
-    // if(!req.user){
         res.sendFile(publicDir + "/views/index.html");
-    // } else {
-        // res.sendFile(publicDir + "/views/user.html");
-    // }
-
 });
+
 router.post('/signup', function(req, res){
     Account.new(req.body.account, function(err, account){
         if(err) res.json({error: err});
