@@ -5,71 +5,13 @@
     <title>Sign-up</title>
     <link rel="stylesheet" href="/css/styles.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular-route.min.js" charset="utf-8"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular-cookies.min.js" charset="utf-8"></script>
     <script src="js/app.js" charset="utf-8"></script>
 </head>
 <body ng-controller="MainController">
-
-    <section id="welcome" ng-if="!user">
-        <!-- <h1>{{header}}</h1> -->
-        <h1>Sign up!</h1>
-        <form action="/signup" method="post">
-            <input type="text" name="account[username]" placeholder="Username">
-            <input type="password" name="account[password]" placeholder="Password">
-            <input type="submit">
-        </form>
-
-        <h1>...or Log In</h1>
-        <form ng-submit="login()">
-            <input type="text" ng-model="credentials.username">
-            <input type="password" ng-model="credentials.password">
-            <input type="submit">
-        </form>
-    </section>
+<section ng-view></section>
 
 
-    <section ng-if="user">
-        <button ng-click="logout()">logout</button>
-        <section id="profile">
-            <h1>{{header}}</h1>
-            <div id="list-list" ng-show="show == 'lists'">
-                Lists:
-                <ul>
-                    <li><a href="#" ng-click="show = 'new list'">New List</a></li>
-                    <li ng-repeat="list in lists">
-                        <span ng-click="getList(list.id)">{{list.name}}</span> <a href="#" ng-if="list.type !=='inventory'" ng-click="deleteList(list.id)">x</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div id="list" ng-show="show == 'list'">
-                <a href="#" ng-click="show = 'lists'">X</a><br />
-                Current List:
-                {{list.name}}<br />
-                {{list.description}}
-                <form ng-submit="addListItem()">
-                    <input type="text" ng-model="newListItem.name" placeholder="name">
-                    <input type="text" ng-model="newListItem.desc" placeholder="description">
-                    <input type="number" ng-model="newListItem.qty" placeholder="quantity">
-                    <input type="text" ng-model="newListItem.notes" placeholder="notes">
-                    <input type="submit">
-                </form>
-                <ul>
-                    <li class="items" ng-repeat="item in list.items">
-                        {{item.qty}} - {{item.name}} <a href="#" ng-click="deleteListItem(item.id)">x</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div id="new-list" ng-show="show == 'new list'">
-                <a href="#" ng-click="show = 'lists'">X</a><br />
-                <form ng-submit="addList()">
-                    <input type="text" ng-model="newList.name" placeholder="name">
-                    <input type="text" ng-model="newList.desc" placeholder="description">
-                    <input type="submit">
-                </form>
-            </div>
-        </section>
-    </section>
 </body>
 </html>
