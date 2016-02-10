@@ -1,0 +1,5 @@
+<h2>Settings</h2>
+
+<button ng-click="createTeam()" ng-if="!user.team_id">Create Team</button>
+<button ng-click="createTeam()" ng-if="user.team_id">Invite others to the Team</button>
+<button ng-click="removeAccount()">Remove Account</button>

@@ -46,6 +46,7 @@ CREATE TABLE list_items (
 -- Detailed comments on the SO post.
 --
 --
+-- pantryapp=# select * from food_des Where long_desc ilike '%$1%' and long_desc ilike '%oil%';
 -- CREATE TABLE product (
 --   product_id serial PRIMARY KEY  -- implicit primary key constraint
 -- , product    text NOT NULL

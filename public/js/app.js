@@ -1,4 +1,4 @@
-var app = angular.module("PantryApp", ['ngCookies', 'ngRoute', 'mainController', 'loginController', "listsController", 'listItemsController']);
+var app = angular.module("PantryApp", ['ngCookies', 'ngRoute', 'mainController', 'accountsController', 'loginController', "listsController", 'listItemsController']);
 
 app.config(['$routeProvider', function( $routeProvider) {
     $routeProvider
@@ -18,9 +18,38 @@ app.config(['$routeProvider', function( $routeProvider) {
             templateUrl: 'views/partials/list.html',
             controller: "ListItemsController"
         })
+        .when('/team', {
+            templateUrl: 'views/partials/team.html',
+            controller: "ListItemsController"
+        })
+        .when('/settings', {
+            templateUrl: 'views/partials/settings.html',
+            controller: "AccountsController"
+        })
         .otherwise({
             redirectTo: "/login"
         });
+}]);
+
+var accountsCtrl = angular.module("accountsController", ['accountService']);
+
+accountsCtrl.controller('AccountsController', ['$scope', '$location', 'Account', function($scope, $location, Account){
+
+    $scope.createTeam = function() {
+        Account.createTeam($scope.newTeam).then(function(){
+            $location.path('/team');
+        });
+    };
+    $scope.removeAccount = function() {
+        //saving in variable incase request cycle deletes $scope.user while it's updating.
+        var user_id = $scope.user.id;
+        var team_id = $scope.user.team_id;
+        Account.delete($scope.user.id).then(function(response){
+            console.log(response);
+            $scope.setUser(null);
+            $location.path('login');
+        });
+    };
 }]);
 
 var liCtrl = angular.module('listItemsController', ['ListItemsFactory']);
@@ -131,6 +160,7 @@ function($scope, $location, $cookies, Account){
         $scope.setUser(null);
         $location.path('/login');
     };
+
     $scope.header="Well, howdy there...";
 }]);
 
@@ -143,6 +173,17 @@ accountService.factory('Account', ['$http', function($http){
         return $http.get('/token/' + token);
     };
 
+    Account.createTeam = function(newTeam){
+        return $http.post('/accounts/team', {newTeam: newTeam});
+    };
+
+    Account.delete = function(account_id) {
+        return $http.delete('/accounts/' + account_id);
+    };
+
+    Account.teammates = function(team_id) {
+        return $http.get('/accounts/teammates/' + team_id);
+    };
 
     return Account;
 }]);

@@ -16,5 +16,6 @@ function($scope, $location, $cookies, Account){
         $scope.setUser(null);
         $location.path('/login');
     };
+
     $scope.header="Well, howdy there...";
 }]);

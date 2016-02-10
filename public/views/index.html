@@ -12,8 +12,7 @@
 <body ng-controller="MainController">
     <header ng-if="user">
         <button ng-click="logout()">logout</button>
-        <button ng-if="!user.team_id">Create a Team</button>
-        <a href="/team" ng-if="user.team_id">Team Settings</a>
+        <a href="#/settings">Settings</a>
         <h1>Hello, {{user.name}}!</h1>
     </header>
 

@@ -79,9 +79,11 @@ Account.login = function(credentials, callback) {
 
         var text = 'SELECT * FROM accounts WHERE name LIKE $1';
         client.query(text, [credentials.username], function(err, result){
-            if(err){return callback({message: "incorrect username", error: err});}
-            console.log("PG.Account: User found");
+            if(err){return callback({message: "Selecct error", error: err});}
             var user = result.rows[0];
+            if(!user){return callback({message: "incorrect username"});}
+            console.log("PG.Account: User found");
+
 
             if(bcrypt.compareSync(credentials.password, user.passwordhash)){
                 //Password matches! Now create a token.
@@ -106,6 +108,7 @@ Account.login = function(credentials, callback) {
 
 Account.findByToken = function(token, callback){
     pg.connect(connection, function(err, client, done){
+        if(err){return callback({message: "Connection Error:", error: err});}
         console.log("PG.Account.findByToken: Connection");
 
         var text = 'SELECT * FROM accounts WHERE token LIKE $1';
@@ -120,6 +123,7 @@ Account.findByToken = function(token, callback){
 };
 Account.findById = function(id, callback){
     pg.connect(connection, function(err, client, done){
+        if(err){return callback({message: "Connection Error:", error: err});}
         console.log("PG.Account.findById: Connection");
 
         var text = 'SELECT * FROM accounts WHERE id = $1';
@@ -131,13 +135,27 @@ Account.findById = function(id, callback){
         });
     });
 };
+Account.teammates = function(team_id, callback) {
+    pg.connect(connection, function(err, client, done){
+        if(err){return callback({message: "Connection Error:", error: err});}
+        console.log("PG.Account.teammates: Connection");
+
+        var text = 'SELECT * FROM accounts WHERE team_id = $1';
+        client.query(text, [team_id], function(err, result){
+            done();
+            if(err) callback({message: "team not found", error: err});
+            var users = result.rows;
+            callback(null, users);
+        });
+    });
+};
 
 // ------------------------------------------------
 // -------------------- UPDATE --------------------
 // ------------------------------------------------
 Account.update = function(account, edited, callback){
     pg.connect(connection, function(err, client, done){
-        if(err){callback({message: "Connection Error:", error: err});}
+        if(err){return callback({message: "Connection Error:", error: err});}
         console.log("PG.Account.update: Connected");
 
         var now = Date.now();
@@ -154,15 +172,20 @@ Account.update = function(account, edited, callback){
 // -------------------------------------------------
 // -------------------- DESTROY --------------------
 // -------------------------------------------------
-Account.delete = function (account, callback) {
+Account.delete = function (account_id, callback) {
     pg.connect(connection, function(err, client, done) {
-        if(err){callback({message: "Connection Error:", error: err});}
+        if(err){return callback({message: "Connection Error:", error: err});}
         console.log("PG.Account.delete: Connected");
 
-        client.query('DELETE FROM accounts WHERE id = $1 CASCADE', [account.id], function(err, response){
+        client.query('DELETE FROM accounts WHERE id = $1', [account_id], function(err, response){
             done();
-            if(err) callback({error: err});
-            callback(null, {message: "User" + account.name + "is deleted", response: response});
+            if(err) {
+                console.log('\nError:\n', err);
+                return callback({error: err});
+            }
+
+            console.log("PG.Account.delete: Successful delete.");
+            callback(null, {message: "Account is deleted", response: response});
         });
     });
 };
