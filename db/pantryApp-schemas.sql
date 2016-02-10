@@ -1,6 +1,10 @@
+DROP TABLE IF EXISTS accounts CASCADE;
+DROP TABLE IF EXISTS lists CASCADE;
+DROP TABLE IF EXISTS list_items CASCADE;
+
 CREATE TABLE accounts (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(30),
+    name VARCHAR(30) UNIQUE,
     passwordhash VARCHAR,
     team_id INTEGER, --If there is an id, it's a user.  If there isn't. it's a team.
     type VARCHAR(12), --Admin, team leader, user, team

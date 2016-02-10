@@ -43,27 +43,45 @@ Account.team = function(user, newTeam, callback){
         if(err){return callback(err);}
         console.log("PG.Account.team: Connected");
 
-        var now = Date.now();
-        var buffer = (crypto.randomBytes(128)).toString('hex');//fake password for team for inviting other members
 
-        //create team account
+        var now = Date.now();
+        var buffer = (crypto.randomBytes(128)).toString('hex'); //fake password for team for inviting other members
+
+        //create team account using the user who created the team and the newTeam info
         var text = 'INSERT INTO accounts(name, passwordhash, type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING *';
         client.query(text, [newTeam.name, buffer, "team", now, now], function(err, result){
             if(err){return callback(err);}
             console.log("PG.Account.team: Team Created");
-            newTeam = result.rows[0];
+            console.log(result);
+            dbTeam = result.rows[0];
 
             //update user to reflect team
             var text = "UPDATE accounts SET team_id = $1, updated_at = $2 WHERE id = $3";
-            client.query(text, [newTeam.id, now, user.id], function(err, response){
-                done();
-                if (err) {console.log(err);}
-                console.log("PG.Account: Token written on team");
+            client.query(text, [dbTeam.id, now, user.id], function(err, response){
+                if(err){
+                    console.log(err);
+                    return callback(err);}
+                console.log("PG.Account.team: User added to team");
+
+                //Move the inventory to the team
+                var text = "UPDATE lists SET account_id = $1 WHERE account_id = $2 AND type = 'inventory'";
+                client.query(text, [dbTeam.id, user.id], function(err, response){
+                    done();
+                    if(err) {
+                        console.log(err);
+                        return callback({message:"Update error", error: err});
+                    }
+                    console.log("PG.Account.team: Inventory moved from user to team");
+
+
+                    //Success!
+                    callback(null, newTeam);
+                });
+
             });
-            //Success!
-            callback(null, newTeam);
+
             //Move inventory to team
-            List.moveInventory(user, newTeam, function(){});
+            // List.moveInventory(user, newTeam, function(){});
         });
     });
 };

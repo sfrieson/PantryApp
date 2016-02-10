@@ -14,5 +14,7 @@
         <li class="items" ng-repeat="item in list.items">
             {{item.qty}} - {{item.name}} <span ng-click="delete(item.id, $index)">x</span>
         </li>
+        <button ng-click="purchased = !purchased">purchased</button>
+        <button ng-show="purchased" ng-click="moveToInventory()">Move to inventory</button>
     </ul>
 </div>

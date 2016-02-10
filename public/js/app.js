@@ -76,6 +76,13 @@ liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', 
             $scope.list.items.splice(index, 1);
         });
     };
+
+    $scope.moveToInventory = function() {
+        var fakeInventory={id:1};
+        ListItem.switchList(fakeInventory, $scope.list.items).then(function(response){
+            console.log(response);
+        });
+    };
 }]);
 
 var listCtrl = angular.module("listsController", ['listsFactory']);
@@ -218,6 +225,9 @@ liFactory.factory('ListItem', ['$http', function($http){
 
     ListItem.delete = function(listItemId){
         return $http.delete('/lists/items/' + listItemId);
+    };
+    ListItem.switchList = function(targetList, itemsArr) {
+        return $http.patch('/lists/items/move-all', {targetList: targetList, itemsArr: itemsArr});
     };
     return ListItem;
 }]);

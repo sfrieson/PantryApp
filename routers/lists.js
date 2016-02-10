@@ -33,6 +33,16 @@ router.post('/items', function(req, res){
         res.json(response);
     });
 });
+
+router.patch('/items/move-all', function(req, res){
+    ListItem.switchList(req.body.targetList, req.body.itemsArr, function(err, response){
+        if (err) {
+            console.log({error: err});
+        }
+        res.json(response);
+    });
+});
+
 router.delete('/items/:id', function(req,res){
     console.log("Deleting");
     ListItem.delete(req.params.id, function(err, response){

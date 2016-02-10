@@ -19,4 +19,11 @@ liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', 
             $scope.list.items.splice(index, 1);
         });
     };
+
+    $scope.moveToInventory = function() {
+        var fakeInventory={id:1};
+        ListItem.switchList(fakeInventory, $scope.list.items).then(function(response){
+            console.log(response);
+        });
+    };
 }]);

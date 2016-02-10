@@ -47,7 +47,7 @@ ListItem.get = function(list, callback){
 // ------------------------------------------------
 // -------------------- UPDATE --------------------
 // ------------------------------------------------
-ListItem.switchList = function(item, targetList, callback){
+ListItem.switch = function(item, targetList, callback){
     pg.connect(connection, function (err, client, done) {
         if(err) return callback({message:"Connection error", error: err});
         console.log("PG.ListItem.switchList: Connected");
@@ -62,6 +62,56 @@ ListItem.switchList = function(item, targetList, callback){
         });
     });
 };
+
+ListItem.switchList = function(targetList, itemArr, callback) {
+    var rollback = function(client, done) {
+        client.query('ROLLBACK', function(err) {
+            //If there's an error, rollback.
+            console.log("ROLLBACK ROLLBACK ROLLBACK ROLLBACK ROLLBACK ROLLBACK");
+            callback(err);
+            return done(err);
+        });
+    };
+
+    //to be called recursively until array is up.
+    var i=0;
+    var responseArr = [];
+    var query = function query (client, done) {
+        console.log("\nTarget list:\n", targetList, "\nitemArr:\n", itemArr, "\ni:\n", i, "\nitemArr[i]\n", itemArr[i]);
+        var text = "UPDATE list_items SET list_id = $1 WHERE id = $2";
+        var data = [targetList.id, itemArr[i].id];
+        client.query(text, data, function(err, response){
+            if(err){
+                console.log("\nRecursive switching, iteration " + i + ". Error:\n", err);
+                return rollback(client, done);
+            }
+
+            responseArr.push(response);
+            i++;
+            if(i < itemArr.length){
+                query(client);
+            } else {
+                //Done working;
+                client.query('COMMIT', done);
+                return callback(null, responseArr);
+            }
+        });
+    };
+
+
+    pg.connect(connection, function(err, client, done) {
+        if(err) throw err;
+        console.log("PG.List.addItems: Connected");
+
+        client.query('BEGIN', function(err) {
+            if(err) return rollback(client, done);
+            process.nextTick(function() {
+                query(client, done);
+            });
+        });
+    });
+};
+
 // -------------------------------------------------
 // -------------------- DESTROY --------------------
 // -------------------------------------------------

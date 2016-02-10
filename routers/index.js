@@ -7,7 +7,7 @@ router.get('/', function(req, res){
 });
 
 router.get('/join-team', function(req, res){
-    res.cookie('pantry_app_team', req.query.token);
+    res.cookie('pantry_app_team', req.query.token, {maxAge: 21600000}); //expires after 6 hours
     res.sendFile("views/join-team.html", {root: "./public"});
 });
 
@@ -15,21 +15,21 @@ router.post('/signup', function(req, res){
     //add directly to team if there is the proper cookie.
     req.body.account.team_id = req.cookies.pantry_app_team || null;
     Account.new(req.body.account, function(err, account){
-        if(err) res.json({error: err});
+        if(err) return res.json({error: err});
         res.json({"new user": account});
     });
 });
 
 router.post('/login', function(req,res){
     Account.login(req.body.user, function(err, user){
-        if(err) console.log(err);
+        if(err) return res.json({error: err});
         res.json(user);
     });
 });
 
 router.get('/token/:token', function(req,res){
     Account.findByToken(req.params.token, function(err, user){
-        if(err) console.log(err);
+        if(err) return res.json({error: err});
         res.json(user);
     });
 });

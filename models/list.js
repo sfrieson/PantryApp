@@ -169,7 +169,7 @@ List.addItem = function(list, item, callback) {
     });
 };
 
-List.addItems = function(list, itemArr, callback) {
+List.switchList = function(targetList, itemArr, callback) {
     var rollback = function(client, done) {
         client.query('ROLLBACK', function(err) {
             //If there's an error, rollback.
@@ -182,8 +182,14 @@ List.addItems = function(list, itemArr, callback) {
     var i=0;
     var responseArr = [];
     var query = function query (client) {
-        ListItem.add(list, itemArr[i], function(err, response){
-            if(err) return rollback(client, done);
+        var text = "UPDATE list_items SET list_id = $1 WHERE id = $2";
+        var data = [targetList.id, itemArr[i].id];
+        client.query(text, data, function(err, response){
+            if(err){
+                console.log("\nRecursive switching, iteration " + i + ". Error:\n", err);
+                return rollback(client, done);
+            }
+
             responseArr.push(response);
             i++;
             if(i <= itemArr.length){
@@ -191,7 +197,7 @@ List.addItems = function(list, itemArr, callback) {
             } else {
                 //Done working;
                 client.query('COMMIT', done);
-                callback(null, responseArr);
+                return callback(null, responseArr);
             }
         });
     };
