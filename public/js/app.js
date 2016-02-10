@@ -96,6 +96,7 @@ listCtrl.controller('ListsController', ['$scope', '$http', "$location", 'List', 
 
     // ------------- CREATE -------------
     $scope.addList = function(){
+        console.log("Controller $scope.newList =\n", $scope.newList);
         List.add($scope.newList).then(function(response){
             $scope.newList = {};
             $scope.lists.push(response.data.list);
@@ -117,7 +118,7 @@ listCtrl.controller('ListsController', ['$scope', '$http', "$location", 'List', 
             console.log(response);
         });
     };
-    
+
     // ------------- LIST ITEMS -------------
     $scope.addListItem = function(){
         List.addListItem().then(function(response){

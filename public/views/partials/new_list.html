@@ -3,6 +3,10 @@
     <form ng-submit="addList()">
         <input type="text" ng-model="newList.name" placeholder="name">
         <input type="text" ng-model="newList.desc" placeholder="description">
+        <select ng-model="newList.account_id">
+            <option value="{{user.id}}" selected>Your Lists</option>
+            <option ng-if="user.team_id" value="{{user.team_id}}">Team Lists</option>
+        </select>
         <input type="submit">
     </form>
 </div>

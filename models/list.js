@@ -7,20 +7,23 @@ var ListItem = require("./listitem.js");
 // ------------------------------------------------
 // -------------------- CREATE --------------------
 // ------------------------------------------------
-List.new = function(account, list, callback, type){
+List.new = function(list, callback, type){
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message:"Connection error", error: err});
         console.log("PG.List.new: Connected");
 
         var now = Date.now();
         type = type || "list";
-
-        var text="INSERT INTO lists (account_id, team_id, name, description, type, created_at, updated_at) " +
-        "VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *";
-        var values = [account.id, account.team_id, list.name, list.desc, type, now, now];
+        console.log('list account id', list.account_id);
+        var text="INSERT INTO lists (account_id, name, description, type, created_at, updated_at) " +
+        "VALUES ($1, $2, $3, $4, $5, $6) RETURNING *";
+        var values = [list.account_id, list.name, list.desc, type, now, now];
         client.query(text, values, function(err, response){
             done();
-            if(err) return callback({message:"Insert error", error: err});
+            if(err){
+                console.log(err);
+                return callback({message:"Insert error", error: err});
+            }
             console.log("PG.List.new: List added.");
             callback(null, response.rows[0]);
         });
@@ -44,11 +47,17 @@ List.getAll = function(account, callback){
         console.log("PG.List.getAll: Connected");
 
         var text = "SELECT * FROM lists WHERE account_id = $1";
-        client.query(text, [account.id], function(err, result){
-            done();
+        var data = [account.id];
+        if(account.team_id){ //if the user has a team add on to the query
+            text += " OR account_id = $2";
+            data.push(account.team_id); 
+        }
+        client.query(text, data, function(err, result){
             if (err) return callback({message:"Select error", error: err});
+            done();
             console.log("PG.List.getAll: All selected");
-            callback(null, result.rows);
+            return callback(null, result.rows);
+
         });
     });
 };
@@ -169,10 +178,11 @@ List.addItem = function(list, item, callback) {
     });
 };
 
-List.switchList = function(targetList, itemArr, callback) {
+ListItem.switchList = function(targetList, itemArr, callback) {
     var rollback = function(client, done) {
         client.query('ROLLBACK', function(err) {
             //If there's an error, rollback.
+            console.log("ROLLBACK ROLLBACK ROLLBACK ROLLBACK ROLLBACK ROLLBACK");
             callback(err);
             return done(err);
         });
@@ -181,7 +191,8 @@ List.switchList = function(targetList, itemArr, callback) {
     //to be called recursively until array is up.
     var i=0;
     var responseArr = [];
-    var query = function query (client) {
+    var query = function query (client, done) {
+        console.log("\nTarget list:\n", targetList, "\nitemArr:\n", itemArr, "\ni:\n", i, "\nitemArr[i]\n", itemArr[i]);
         var text = "UPDATE list_items SET list_id = $1 WHERE id = $2";
         var data = [targetList.id, itemArr[i].id];
         client.query(text, data, function(err, response){
@@ -189,10 +200,10 @@ List.switchList = function(targetList, itemArr, callback) {
                 console.log("\nRecursive switching, iteration " + i + ". Error:\n", err);
                 return rollback(client, done);
             }
-
             responseArr.push(response);
+
             i++;
-            if(i <= itemArr.length){
+            if(i < itemArr.length){
                 query(client);
             } else {
                 //Done working;
@@ -202,14 +213,14 @@ List.switchList = function(targetList, itemArr, callback) {
         });
     };
 
-    pg.connect(function(err, client, done) {
+    pg.connect(connection, function(err, client, done) {
         if(err) throw err;
         console.log("PG.List.addItems: Connected");
 
         client.query('BEGIN', function(err) {
             if(err) return rollback(client, done);
             process.nextTick(function() {
-                query(client);
+                query(client, done);
             });
         });
     });

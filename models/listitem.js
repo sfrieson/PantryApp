@@ -85,8 +85,8 @@ ListItem.switchList = function(targetList, itemArr, callback) {
                 console.log("\nRecursive switching, iteration " + i + ". Error:\n", err);
                 return rollback(client, done);
             }
-
             responseArr.push(response);
+            
             i++;
             if(i < itemArr.length){
                 query(client);
@@ -97,7 +97,6 @@ ListItem.switchList = function(targetList, itemArr, callback) {
             }
         });
     };
-
 
     pg.connect(connection, function(err, client, done) {
         if(err) throw err;

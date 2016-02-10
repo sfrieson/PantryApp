@@ -21,7 +21,7 @@ router.delete('/:id', function(req,res){
 });
 
 router.post('/', function(req, res){
-    List.new(req.user, req.body.list, function(err, response){
+    List.new(req.body.list, function(err, response){
         res.json({list:response});
     });
 });
