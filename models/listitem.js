@@ -9,7 +9,7 @@ var ListItem = {};
 ListItem.add = function (list, item, callback) {
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message:"Connection error", error: err});
-        console.log("PG.ListItems: Connected");
+        console.log("PG.ListItem: Connected");
         var now = Date.now();
         item.status = list.type === "inventory" ? "In inventory." : "Needed";
         item.qty = item.qty || 1;
@@ -20,6 +20,7 @@ ListItem.add = function (list, item, callback) {
         client.query(text, values, function(err, response){
             done();
             if(err) return callback({message:"Insert error", error: err});
+            console.log("PG.ListItem.add: List item added");
 
             callback(null, response.rows[0]);
         });
@@ -31,12 +32,13 @@ ListItem.add = function (list, item, callback) {
 ListItem.get = function(list, callback){
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message:"Connection error", error: err});
-        console.log("PG.ListItems: Connected");
+        console.log("PG.ListItem.get: Connected");
 
         var text = "SELECT * FROM list_items WHERE list_id = $1";
         client.query(text, [list.id], function(err, result){
             done();
             if (err) return callback({message:"Select error", error: err});
+            console.log("PG.ListItem: List item selected");
             callback(null, result.rows);
         });
     });
@@ -48,13 +50,14 @@ ListItem.get = function(list, callback){
 ListItem.switchList = function(item, targetList, callback){
     pg.connect(connection, function (err, client, done) {
         if(err) return callback({message:"Connection error", error: err});
-        console.log("PG.ListItem: Connected");
+        console.log("PG.ListItem.switchList: Connected");
 
         var newStatus = targetList.type == "inventory" ? "In inventory." : "Needed";
         var text = "UPDATE list_items WHERE id= $1 SET id= $2, status= $3'";
         client.query(text, [list.id, targetList.id, newStatus], function(err){
             done();
             if(err) return callback({message:"Select error", error: err});
+            console.log("PG.ListItem.switchList: Item switched between lists");
             callback(null, {message:"successful"});
         });
     });
@@ -65,11 +68,12 @@ ListItem.switchList = function(item, targetList, callback){
 ListItem.delete = function (listItem_id, callback) {
     pg.connect(connection, function(err, client, done) {
         if(err){callback({message: "Connection Error:", error: err});}
-        console.log("PG.List: Connected");
+        console.log("PG.List.delete: Connected");
 
         client.query('DELETE FROM list_items WHERE id = $1', [listItem_id], function(err, response){
             done();
             if(err) callback({error: err});
+            console.log("PG.List.delete: List item deleted");
             callback(null, {message: "List Item is deleted", response: response});
         });
     });

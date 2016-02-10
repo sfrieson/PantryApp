@@ -22,8 +22,9 @@ Account.new = function(newAcct, callback) {
 
         var text = 'INSERT INTO accounts(name, passwordhash, team_id, type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
         client.query(text, [newAcct.username, hash, newAcct.team_id, "user", now, now], function(err, result){
+            done();
             if(err){return callback(err);}
-            console.log("PG.Account: User Created");
+            console.log("PG.Account.new: User Created");
             user = result.rows[0];
 
             callback(null, user);
@@ -49,7 +50,7 @@ Account.team = function(user, newTeam, callback){
         var text = 'INSERT INTO accounts(name, passwordhash, type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING *';
         client.query(text, [newTeam.name, buffer, "team", now, now], function(err, result){
             if(err){return callback(err);}
-            console.log("PG.Account: User Created");
+            console.log("PG.Account.team: Team Created");
             newTeam = result.rows[0];
 
             //update user to reflect team
@@ -130,6 +131,7 @@ Account.findById = function(id, callback){
         client.query(text, [id], function(err, result){
             done();
             if(err){return callback({message: "ID not found", error: err});}
+            console.log("PG.Account.findById: Account found");
             var user = result.rows[0];
             callback(null, user);
         });
@@ -144,6 +146,7 @@ Account.teammates = function(team_id, callback) {
         client.query(text, [team_id], function(err, result){
             done();
             if(err) callback({message: "team not found", error: err});
+            console.log("PG.Account.teammates: Team Found");
             var users = result.rows;
             callback(null, users);
         });

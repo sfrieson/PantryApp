@@ -21,13 +21,13 @@ List.new = function(account, list, callback, type){
         client.query(text, values, function(err, response){
             done();
             if(err) return callback({message:"Insert error", error: err});
-
+            console.log("PG.List.new: List added.");
             callback(null, response.rows[0]);
         });
     });
 };
 List.newInventory = function(account, callback){
-    console.log("List.newInventory.....");
+    console.log("PG.List.newInventory.....");
     var list = {
         name: "Inventory",
         desc: "Everything that you currently own."
@@ -47,6 +47,7 @@ List.getAll = function(account, callback){
         client.query(text, [account.id], function(err, result){
             done();
             if (err) return callback({message:"Select error", error: err});
+            console.log("PG.List.getAll: All selected");
             callback(null, result.rows);
         });
     });
@@ -60,8 +61,10 @@ List.get = function(list_id, callback){
         client.query(text, [list_id], function(err, result){
             done();
             if (err) return callback({message:"Select error", error: err});
+            console.log("PG.List.getOne: Selected List");
             var list = result.rows[0];
             ListItem.get(list, function(err, result){
+                console.log("List.getOne calling ListItem.get...");
                 list.items = result;
                 callback(null, list);
             });
@@ -77,6 +80,7 @@ List.getInventory = function(user, callback){
         client.query(text, [user.id], function(err, result){
             done();
             if(err)return callback({message:"Select error", error: err});
+            console.log("PG.List.getInventory: Selected Inventory");
             callback(null, result.rows[0]);
         });
     });
@@ -96,7 +100,8 @@ List.changeOwner = function(list, newOwner, callback){
         var text = "UPDATE lists WHERE id= $1 SET id = $2 '";
         client.query(text, [list.id, newOwner.id], function(err){
             done();
-            if(err) return callback({message:"Select error", error: err});
+            if(err) return callback({message:"Update error", error: err});
+            console.log("PG.List.changeOwner: Owner changed");
             callback(null, {message:"successful"});
         });
     });
@@ -110,7 +115,8 @@ List.moveInventory = function (currentOwner, newOwner, callback){
         var text = "UPDATE lists WHERE account_id= $1, type = 'inventory' SET id = $2 '";
         client.query(text, [currentOwner.id, newOwner.id], function(err){
             done();
-            if(err) return callback({message:"Select error", error: err});
+            if(err) return callback({message:"Update error", error: err});
+            console.log("PG.List.moveInventory: Inventory moved");
             callback(null, {message:"successful"});
         });
     });
@@ -129,7 +135,8 @@ List.delete = function (list_id, callback) {
 
         client.query('DELETE FROM lists WHERE id = $1', [list_id], function(err, response){
             done();
-            if(err) callback({error: err});
+            if(err) callback({message: "delete error", error: err});
+            console.log("PG.List.delete: List deleted");
             callback(null, {message: "List is deleted", response: response});
         });
     });
@@ -149,7 +156,8 @@ List.getItems = function(list_id, callback) {
         "SELECT * FROM all_items WHERE list_id = $1;";
         client.query(text, [list_id], function(err, response){
             done();
-            if(err) callback({error: err});
+            if(err) callback({message: "Select error", error: err});
+            console.log("PG.List.getItems: All items Selected");
             callback(null, {message: "List" + list.name + "is deleted", response: response});
         });
     });
