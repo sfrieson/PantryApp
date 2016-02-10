@@ -20,8 +20,8 @@ Account.new = function(newAcct, callback) {
         var hash = bcrypt.hashSync(newAcct.password, 8);
 
 
-        var text = 'INSERT INTO accounts(name, passwordhash, type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5) RETURNING *';
-        client.query(text, [newAcct.username, hash, "user", now, now], function(err, result){
+        var text = 'INSERT INTO accounts(name, passwordhash, team_id, type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+        client.query(text, [newAcct.username, hash, newAcct.team_id, "user", now, now], function(err, result){
             if(err){return callback(err);}
             console.log("PG.Account: User Created");
             user = result.rows[0];

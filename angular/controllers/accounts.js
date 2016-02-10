@@ -7,6 +7,9 @@ accountsCtrl.controller('AccountsController', ['$scope', '$location', 'Account',
             $location.path('/team');
         });
     };
+    $scope.invite = function() {
+        $scope.url = "http://localhost:8080/join-team?token=" + $scope.user.team_id;
+    };
     $scope.removeAccount = function() {
         //saving in variable incase request cycle deletes $scope.user while it's updating.
         var user_id = $scope.user.id;
