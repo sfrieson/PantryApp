@@ -16,6 +16,9 @@ liFactory.factory('ListItem', ['$http', function($http){
         name = name.split(' ').join('+');
         return $http.get('/lists/items/find?name=' + name);
     };
+    ListItem.nutrition = function(ndb_no) {
+        return $http.get('/lists/items/nutrition?ndb_no=' + ndb_no);
+    };
     // -------------------- UPDATE --------------------
     ListItem.edit = function(item){
         return $http.patch('/lists/items', {item: item});

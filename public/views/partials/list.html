@@ -15,18 +15,22 @@
             {{item.qty}} - <span ng-click="findFood(item)">{{item.name}}</span>
             <span ng-click="delete(item.id, $index)">x</span>
         </li>
-        <div ng-if="listItem">
+        <div ng-if="results">
             Select the food from USDA that best matches:
             Your input: {{listItem.name}}
             <form ng-submit="saveFood()">
 
                 <input type="submit" value="Select">
-                <select ng-model="listItem.nbd_no">
-                    <option ng-repeat="result in results" value="{{result.nbd_no}}">
+                <select ng-model="listItem.ndb_no">
+                    <option ng-repeat="result in results" value="{{result.ndb_no}}">
                         {{result.long_desc}}
                     </option>
                 </select>
             </form>
+        </div>
+        <div ng-if="nutrients">
+            USDA info on {{listItem.name}}.<br />
+
         </div>
         <button ng-click="purchased = !purchased">Purchased</button>
         <button ng-show="purchased" ng-click="moveToInventory()">Move to inventory</button>

@@ -1,7 +1,9 @@
 var listCtrl = angular.module("listsController", ['listsFactory']);
 
 listCtrl.controller('ListsController', ['$scope', '$http', "$location", 'List', function($scope, $http, $location, List){
-
+    if (!$scope.user) {
+        $location.path('/login');
+    }
     // Get all lists when you arrive here.
     List.getList().then(function(response){
         $scope.lists = response.data.lists;

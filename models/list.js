@@ -33,10 +33,11 @@ List.newInventory = function(account, callback){
     console.log("PG.List.newInventory.....");
     var list = {
         name: "Inventory",
-        desc: "Everything that you currently own."
+        desc: "Everything that you currently own.",
+        account_id: account.id
     };
     var type = "inventory";
-    List.new(account, list, callback, type);
+    List.new(list, callback, type);
 };
 // ----------------------------------------------
 // -------------------- READ --------------------
@@ -50,7 +51,7 @@ List.getAll = function(account, callback){
         var data = [account.id];
         if(account.team_id){ //if the user has a team add on to the query
             text += " OR account_id = $2";
-            data.push(account.team_id); 
+            data.push(account.team_id);
         }
         client.query(text, data, function(err, result){
             if (err) return callback({message:"Select error", error: err});

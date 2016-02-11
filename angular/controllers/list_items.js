@@ -1,6 +1,9 @@
 var liCtrl = angular.module('listItemsController', ['ListItemsFactory']);
 
 liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', function($scope, $routeParams, ListItem){
+    if (!$scope.user) {
+        $location.path('/login');
+    }
     ListItem.getList($routeParams.id).then(function(response){
         $scope.list = response.data;
 
@@ -20,11 +23,19 @@ liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', 
         });
     };
     $scope.findFood = function(listItem) {
-        ListItem.findFood(listItem.name).then(function(response){
-            console.log(response);
-            $scope.listItem = listItem;
-            $scope.results = response.data;
-        });
+        if(listItem.ndb_no) {
+            ListItem.nutrition(listItem.ndb_no).then(function(response){
+                $scope.listItem = listItem;
+                console.log(response.data);
+                $scope.nutrients = response.data;
+            });
+        } else {
+            ListItem.findFood(listItem.name).then(function(response){
+                console.log(response);
+                $scope.listItem = listItem;
+                $scope.results = response.data;
+            });
+        }
     };
     $scope.saveFood = function(){
         ListItem.edit($scope.listItem).then(function(response){

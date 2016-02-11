@@ -58,6 +58,9 @@ accountsCtrl.controller('AccountsController', ['$scope', '$location', 'Account',
 var liCtrl = angular.module('listItemsController', ['ListItemsFactory']);
 
 liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', function($scope, $routeParams, ListItem){
+    if (!$scope.user) {
+        $location.path('/login');
+    }
     ListItem.getList($routeParams.id).then(function(response){
         $scope.list = response.data;
 
@@ -77,11 +80,19 @@ liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', 
         });
     };
     $scope.findFood = function(listItem) {
-        ListItem.findFood(listItem.name).then(function(response){
-            console.log(response);
-            $scope.listItem = listItem;
-            $scope.results = response.data;
-        });
+        if(listItem.ndb_no) {
+            ListItem.nutrition(listItem.ndb_no).then(function(response){
+                $scope.listItem = listItem;
+                console.log(response.data);
+                $scope.nutrients = response.data;
+            });
+        } else {
+            ListItem.findFood(listItem.name).then(function(response){
+                console.log(response);
+                $scope.listItem = listItem;
+                $scope.results = response.data;
+            });
+        }
     };
     $scope.saveFood = function(){
         ListItem.edit($scope.listItem).then(function(response){
@@ -102,7 +113,9 @@ liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', 
 var listCtrl = angular.module("listsController", ['listsFactory']);
 
 listCtrl.controller('ListsController', ['$scope', '$http', "$location", 'List', function($scope, $http, $location, List){
-
+    if (!$scope.user) {
+        $location.path('/login');
+    }
     // Get all lists when you arrive here.
     List.getList().then(function(response){
         $scope.lists = response.data.lists;
@@ -242,6 +255,9 @@ liFactory.factory('ListItem', ['$http', function($http){
     ListItem.findFood = function(name){
         name = name.split(' ').join('+');
         return $http.get('/lists/items/find?name=' + name);
+    };
+    ListItem.nutrition = function(ndb_no) {
+        return $http.get('/lists/items/nutrition?ndb_no=' + ndb_no);
     };
     // -------------------- UPDATE --------------------
     ListItem.edit = function(item){

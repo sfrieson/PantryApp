@@ -14,9 +14,9 @@ ListItem.add = function (list, item, callback) {
         item.status = list.type === "inventory" ? "In inventory." : "Needed";
         item.qty = item.qty || 1;
 
-        var text="INSERT INTO list_items (list_id, name, notes, nbd_no, status, qty, category, created_at, updated_at) " +
+        var text="INSERT INTO list_items (list_id, name, notes, ndb_no, status, qty, category, created_at, updated_at) " +
         "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";
-        var values = [list.id, item.name, item.notes, item.nbd_no, item.status, item.qty, item.category, now, now];
+        var values = [list.id, item.name, item.notes, item.ndb_no, item.status, item.qty, item.category, now, now];
         client.query(text, values, function(err, response){
             done();
             if(err) return callback({message:"Insert error", error: err});
@@ -44,6 +44,26 @@ ListItem.get = function(list, callback){
     });
 };
 
+ListItem.nutrition = function(ndb_no, callback){
+    pg.connect(connection, function(err, client, done){
+        if(err) return callback({message: "Connection error", error: err});
+        console.log("PG.ListItem.nutrition: Connected");
+
+        var text = "SELECT * FROM list_items " +
+        "INNER JOIN food_des USING (ndb_no) " +
+        "INNER JOIN nutr_data USING (ndb_no) " +
+        "INNER JOIN nutr_def USING (nutr_no) " +
+        "WHERE ndb_no LIKE $1";
+
+        client.query(text, [ndb_no], function(err, result){
+            done();
+            if (err) return callback({message: "Select error", error: err});
+            console.log("PG.ListItem.nutrition: Select successful");
+            callback(null, result.rows[0]);
+        });
+    });
+};
+
 // ------------------------------------------------
 // -------------------- UPDATE --------------------
 // ------------------------------------------------
@@ -52,9 +72,9 @@ ListItem.edit = function(item, callback){
         if(err) return callback({message:"Connection error", error: err});
         console.log("PG.ListItem.edit: Connected");
 
-        var text = "UPDATE list_items SET name = $1, notes = $2, nbd_no = $3," +
+        var text = "UPDATE list_items SET name = $1, notes = $2, ndb_no = $3," +
                     " status = $4, qty = $5, category = $6 WHERE id= $7";
-        var data = [item.name, item.notes, item.nbd_no, item.status, item.qty, item.category, item.id];
+        var data = [item.name, item.notes, item.ndb_no, item.status, item.qty, item.category, item.id];
         client.query(text, data, function (err, response){
             done();
             if(err) {
@@ -62,7 +82,7 @@ ListItem.edit = function(item, callback){
                 return callback(err);
             }
             console.log("Pg.ListItem.edit: Successful");
-            callback(response);
+            callback(null, response);
         });
     });
 };
