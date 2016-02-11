@@ -25,10 +25,28 @@ router.post('/', function(req, res){
         res.json({list:response});
     });
 });
+
 router.post('/items', function(req, res){
     List.addItem(req.body.list, req.body.listItem, function(err, response){
         if (err) {
             console.log({error: err});
+        }
+        res.json(response);
+    });
+});
+router.patch('/items', function(req,res){
+    ListItem.edit(req.body.item, function(err, response){
+        if (err) {
+            return console.log({error: err});
+        }
+        res.json(response);
+    });
+});
+
+router.get('/items/find', function(req,res){
+    ListItem.findFood(req.query.name, function(err, response){
+        if (err) {
+            return res.json({error: err});
         }
         res.json(response);
     });

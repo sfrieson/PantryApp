@@ -12,9 +12,23 @@
     </form>
     <ul>
         <li class="items" ng-repeat="item in list.items">
-            {{item.qty}} - {{item.name}} <span ng-click="delete(item.id, $index)">x</span>
+            {{item.qty}} - <span ng-click="findFood(item)">{{item.name}}</span>
+            <span ng-click="delete(item.id, $index)">x</span>
         </li>
-        <button ng-click="purchased = !purchased">purchased</button>
+        <div ng-if="listItem">
+            Select the food from USDA that best matches:
+            Your input: {{listItem.name}}
+            <form ng-submit="saveFood()">
+
+                <input type="submit" value="Select">
+                <select ng-model="listItem.nbd_no">
+                    <option ng-repeat="result in results" value="{{result.nbd_no}}">
+                        {{result.long_desc}}
+                    </option>
+                </select>
+            </form>
+        </div>
+        <button ng-click="purchased = !purchased">Purchased</button>
         <button ng-show="purchased" ng-click="moveToInventory()">Move to inventory</button>
     </ul>
 </div>

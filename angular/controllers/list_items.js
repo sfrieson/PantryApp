@@ -19,6 +19,20 @@ liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', 
             $scope.list.items.splice(index, 1);
         });
     };
+    $scope.findFood = function(listItem) {
+        ListItem.findFood(listItem.name).then(function(response){
+            console.log(response);
+            $scope.listItem = listItem;
+            $scope.results = response.data;
+        });
+    };
+    $scope.saveFood = function(){
+        ListItem.edit($scope.listItem).then(function(response){
+            console.log("Move along... here's your response:", response);
+            $scope.listItem = null;
+            $scope.results = null;
+        });
+    };
 
     $scope.moveToInventory = function() {
         var fakeInventory={id:1};

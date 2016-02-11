@@ -1,0 +1,9 @@
+Select the food from USDA that best matches:
+Your input: {{listItem.name}}
+<form ng-submit="saveFood()">
+    <input type="submit" value="Select">
+    <div ng-repeat="result in results">
+        <input type="radio" ng-model="nbd_no" ng-value="result.nbd_no">
+        <label for="">{{result.long_desc}}</label>
+    </div>
+</form>

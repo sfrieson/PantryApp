@@ -14,9 +14,9 @@ ListItem.add = function (list, item, callback) {
         item.status = list.type === "inventory" ? "In inventory." : "Needed";
         item.qty = item.qty || 1;
 
-        var text="INSERT INTO list_items (list_id, name, notes, food_des, status, qty, category, created_at, updated_at) " +
+        var text="INSERT INTO list_items (list_id, name, notes, nbd_no, status, qty, category, created_at, updated_at) " +
         "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *";
-        var values = [list.id, item.name, item.notes, null, item.status, item.qty, item.category, now, now];
+        var values = [list.id, item.name, item.notes, item.nbd_no, item.status, item.qty, item.category, now, now];
         client.query(text, values, function(err, response){
             done();
             if(err) return callback({message:"Insert error", error: err});
@@ -47,14 +47,33 @@ ListItem.get = function(list, callback){
 // ------------------------------------------------
 // -------------------- UPDATE --------------------
 // ------------------------------------------------
+ListItem.edit = function(item, callback){
+    pg.connect(connection, function(err, client, done){
+        if(err) return callback({message:"Connection error", error: err});
+        console.log("PG.ListItem.edit: Connected");
+
+        var text = "UPDATE list_items SET name = $1, notes = $2, nbd_no = $3," +
+                    " status = $4, qty = $5, category = $6 WHERE id= $7";
+        var data = [item.name, item.notes, item.nbd_no, item.status, item.qty, item.category, item.id];
+        client.query(text, data, function (err, response){
+            done();
+            if(err) {
+                console.log({message: "Update error", error: err});
+                return callback(err);
+            }
+            console.log("Pg.ListItem.edit: Successful");
+            callback(response);
+        });
+    });
+};
 ListItem.switch = function(item, targetList, callback){
     pg.connect(connection, function (err, client, done) {
         if(err) return callback({message:"Connection error", error: err});
         console.log("PG.ListItem.switchList: Connected");
 
         var newStatus = targetList.type == "inventory" ? "In inventory." : "Needed";
-        var text = "UPDATE list_items WHERE id= $1 SET id= $2, status= $3'";
-        client.query(text, [list.id, targetList.id, newStatus], function(err){
+        var text = "UPDATE list_items SET id= $1, status= $2 WHERE id= $3";
+        client.query(text, [targetList.id, newStatus, list.id], function(err){
             done();
             if(err) return callback({message:"Select error", error: err});
             console.log("PG.ListItem.switchList: Item switched between lists");
@@ -86,7 +105,7 @@ ListItem.switchList = function(targetList, itemArr, callback) {
                 return rollback(client, done);
             }
             responseArr.push(response);
-            
+
             i++;
             if(i < itemArr.length){
                 query(client);
@@ -124,6 +143,37 @@ ListItem.delete = function (listItem_id, callback) {
             if(err) callback({error: err});
             console.log("PG.List.delete: List item deleted");
             callback(null, {message: "List Item is deleted", response: response});
+        });
+    });
+};
+
+// -------------------------------------------------
+// -------------------- FOOD DB --------------------
+// -------------------------------------------------
+
+ListItem.findFood = function (search, callback){
+    var text = "SELECT * FROM food_des WHERE ";
+    var data = search.split('+').map(function(word){
+        word = word.split("");
+        word.unshift("%");
+        word.push("%");
+        return word.join("");
+    });
+    for (var i = 0; i < data.length; i++) {
+        if (i > 0) { text += " AND "; }
+        text += "long_desc ILIKE $" + (i+1);
+    }
+
+    pg.connect(connection, function(err, client, done) {
+        console.log("PG.ListItem.findFood: Connection");
+        client.query(text, data, function(err, result){
+            done();
+            if(err){
+                console.log({message: "Select error", error: err});
+                return callback(err);
+            }
+            console.log("PG.ListItem.findFood: Select successful");
+            callback(null, result.rows);
         });
     });
 };

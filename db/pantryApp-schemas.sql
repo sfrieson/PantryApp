@@ -34,7 +34,7 @@ CREATE TABLE list_items (
     list_id INTEGER REFERENCES lists(id) ON DELETE CASCADE,
     name VARCHAR(30), -- may be same as food_des
     notes TEXT, -- notes for user
-    food_des VARCHAR REFERENCES food_des(nbd_no),
+    nbd_no VARCHAR REFERENCES food_des(nbd_no),
     status VARCHAR(16), --'still needed', 'in basket', 'not important', 'in inventory'
     qty NUMERIC, --number needed
     category VARCHAR(30), --where in the store: dairy, meat, appliance
