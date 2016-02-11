@@ -59,7 +59,7 @@ ListItem.nutrition = function(ndb_no, callback){
             done();
             if (err) return callback({message: "Select error", error: err});
             console.log("PG.ListItem.nutrition: Select successful");
-            callback(null, result.rows[0]);
+            callback(null, result.rows);
         });
     });
 };
