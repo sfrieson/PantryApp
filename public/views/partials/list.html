@@ -28,9 +28,12 @@
                 </select>
             </form>
         </div>
-        <div ng-if="nutrients">
+        <div ng-show="nutrients">
+            <a href="javascript:;" ng-click="nutrients = !nutrients">X</a>
             USDA info on {{listItem.name}}.<br />
-
+            <div ng-repeat="nutrient in nutrients">
+                <b>{{nutrient.nutrdesc}}</b> - {{nutrient.nutr_val}}{{nutrient.units}}
+            </div>
         </div>
         <button ng-click="purchased = !purchased">Purchased</button>
         <button ng-show="purchased" ng-click="moveToInventory()">Move to inventory</button>
