@@ -12,8 +12,8 @@ var app = angular.module('PantryApp', [
 
 app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $mdThemingProvider) {
     $routeProvider
-        .when('/login', {
-            templateUrl: '/views/partials/login.html',
+        .when('/signup', {
+            templateUrl: '/views/partials/signup.html',
             controller: 'LoginController'
         })
         .when('/lists', {
@@ -25,19 +25,19 @@ app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $md
             controller: 'ListsController'
         })
         .when('/lists/:id', {
-            templateUrl: 'views/partials/list.html',
+            templateUrl: '/views/partials/list.html',
             controller: 'ListItemsController'
         })
         .when('/team', {
-            templateUrl: 'views/partials/team.html',
+            templateUrl: '/views/partials/team.html',
             controller: 'ListItemsController'
         })
         .when('/settings', {
-            templateUrl: 'views/partials/settings.html',
+            templateUrl: '/views/partials/settings.html',
             controller: 'AccountsController'
         })
         .otherwise({
-            redirectTo: '/login'
+            redirectTo: '/signup'
         });
 
     $mdThemingProvider.theme('default')

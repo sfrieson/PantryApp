@@ -12,8 +12,8 @@ var app = angular.module('PantryApp', [
 
 app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $mdThemingProvider) {
     $routeProvider
-        .when('/login', {
-            templateUrl: '/views/partials/login.html',
+        .when('/signup', {
+            templateUrl: '/views/partials/signup.html',
             controller: 'LoginController'
         })
         .when('/lists', {
@@ -25,19 +25,19 @@ app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $md
             controller: 'ListsController'
         })
         .when('/lists/:id', {
-            templateUrl: 'views/partials/list.html',
+            templateUrl: '/views/partials/list.html',
             controller: 'ListItemsController'
         })
         .when('/team', {
-            templateUrl: 'views/partials/team.html',
+            templateUrl: '/views/partials/team.html',
             controller: 'ListItemsController'
         })
         .when('/settings', {
-            templateUrl: 'views/partials/settings.html',
+            templateUrl: '/views/partials/settings.html',
             controller: 'AccountsController'
         })
         .otherwise({
-            redirectTo: '/login'
+            redirectTo: '/signup'
         });
 
     $mdThemingProvider.theme('default')
@@ -47,7 +47,16 @@ app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $md
 
 var accountsCtrl = angular.module("accountsController", ['accountService']);
 
-accountsCtrl.controller('AccountsController', ['$scope', '$location', 'Account', function($scope, $location, Account){
+accountsCtrl.controller('AccountsController', [
+    '$rootScope', 
+    '$scope',
+    '$location',
+    'Account',
+    function(
+        $rootScope,
+        $scope,
+        $location,
+        Account){
 
     $scope.createTeam = function() {
         Account.createTeam($scope.newTeam).then(function(){
@@ -55,15 +64,15 @@ accountsCtrl.controller('AccountsController', ['$scope', '$location', 'Account',
         });
     };
     $scope.invite = function() {
-        $scope.url = "http://localhost:8080/join-team?token=" + $scope.user.team_id;
+        $scope.url = "http://localhost:8080/join-team?token=" + $rootScope.user.team_id;
     };
     $scope.removeAccount = function() {
-        //saving in variable incase request cycle deletes $scope.user while it's updating.
-        var user_id = $scope.user.id;
-        var team_id = $scope.user.team_id;
-        Account.delete($scope.user.id).then(function(response){
+        //saving in variable incase request cycle deletes $rootScope.user while it's updating.
+        var user_id = $rootScope.user.id;
+        var team_id = $rootScope.user.team_id;
+        Account.delete($rootScope.user.id).then(function(response){
             console.log(response);
-            $scope.setUser(null);
+            $rootScope.setUser(null);
             $location.path('login');
         });
     };
@@ -72,18 +81,20 @@ accountsCtrl.controller('AccountsController', ['$scope', '$location', 'Account',
 var liCtrl = angular.module('listItemsController', ['ListItemsFactory', 'listsFactory']);
 
 liCtrl.controller('ListItemsController', [
+    '$rootScope',
     '$scope',
     '$routeParams',
     'ListItem',
     'List',
 
     function(
+        $rootScope,
         $scope,
         $routeParams,
         ListItem,
         List){
-    if (!$scope.user) {
-        $location.path('/login');
+    if (!$rootScope.user) {
+        $location.path('/signup');
     }
     ListItem.getList($routeParams.id).then(function(response){
         $scope.list = response.data;
@@ -133,18 +144,18 @@ liCtrl.controller('ListItemsController', [
                 console.log(response);
             });
         };
-        console.log($scope.user);
-        if(!$scope.user.lists){
+        console.log($rootScope.user);
+        if(!$rootScope.user.lists){
             List.getList().then(function(response){
                 console.log(response);
-                $scope.user.lists = response.data.lists;
-                $scope.user.lists.map(function(item){
+                $rootScope.user.lists = response.data.lists;
+                $rootScope.user.lists.map(function(item){
                     if (item.type === "inventory") inventory = item;
                     next();
                 });
             });
         } else {
-            $scope.user.lists.map(function(item){
+            $rootScope.user.lists.map(function(item){
                 if (item.type === "inventory") inventory = item;
             });
             next();
@@ -154,19 +165,30 @@ liCtrl.controller('ListItemsController', [
 
 var listCtrl = angular.module("listsController", ['listsFactory']);
 
-listCtrl.controller('ListsController', ['$scope', '$http', "$location", 'List', function($scope, $http, $location, List){
-    if (!$scope.user) {
-        $location.path('/login');
+listCtrl.controller('ListsController', [
+    '$rootScope',
+    '$scope',
+    '$http',
+    "$location",
+    'List',
+    function(
+        $rootScope,
+        $scope,
+        $http,
+        $location,
+        List){
+    if (!$rootScope.user) {
+        $location.path('/signup');
     }
     // Get all lists when you arrive here.
     List.getList().then(function(response){
         $scope.lists = response.data.lists;
-        $scope.user.lists = $scope.lists;
+        $rootScope.user.lists = $scope.lists;
     });
 
     // ------------- CREATE -------------
     $scope.addList = function(){
-        $scope.newList.account_id = $scope.newList.account_id || $scope.user.id;
+        $scope.newList.account_id = $scope.newList.account_id || $rootScope.user.id;
         List.add($scope.newList).then(function(response){
             $scope.newList = {};
             $scope.lists.push(response.data.list);
@@ -202,11 +224,40 @@ listCtrl.controller('ListsController', ['$scope', '$http', "$location", 'List', 
 
 var ctrl = angular.module("loginController", ['authService']);
 
-ctrl.controller("LoginController", ['$scope', '$cookies', '$location', 'Auth', function($scope, $cookies, $location, Auth){
+ctrl.controller("LoginController", [
+    '$rootScope',
+    '$scope',
+    '$cookies',
+    '$location', // ngRoute Paths
+    'Auth', //Authorization Factory
+    '$mdMedia', //Media Querys
+    '$mdDialog', //Modals
+    function(
+        $rootScope,
+        $scope,
+        $cookies,
+        $location,
+        Auth,
+        $mdMedia,
+        $mdDialog){
     $scope.credentials = {};
 
+    $scope.loginModal = function(e) {
+        var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && true;
+        $mdDialog.show({
+            controller: 'LoginController',
+            templateUrl: '/views/partials/login.html',
+            parent: angular.element(document.body),
+            targetEvent: e,
+            clickOutsideToClose:true,
+            fullscreen: useFullScreen
+        });
+    };
+
     $scope.login = function() {
-        user = Auth.login($scope.credentials).then(function (response) {
+        console.log("Logging in with:", $scope.credentials, " to: ", $rootScope.user);
+
+        Auth.login($scope.credentials).then(function (response) {
             $scope.credentials = {};
 
             if(response.data.user){
@@ -214,8 +265,10 @@ ctrl.controller("LoginController", ['$scope', '$cookies', '$location', 'Auth', f
             console.log("putting cookies");
                 $cookies.put('pantry_app_t', user.token);
 
-                $scope.setUser(user);
+                $rootScope.setUser(user);
                 $location.path('/lists');
+
+                $mdDialog.hide();
             }
         });
     };
@@ -225,24 +278,25 @@ ctrl.controller("LoginController", ['$scope', '$cookies', '$location', 'Auth', f
 
 var ctrl = angular.module("mainController", ['accountService']);
 
-ctrl.controller("MainController", ['$scope', '$location', '$cookies', 'Account',
-function($scope, $location, $cookies, Account){
-
+ctrl.controller("MainController", ['$rootScope', '$scope', '$location', '$cookies', 'Account',
+function($rootScope, $scope, $location, $cookies, Account){
+    $rootScope.user = null;
+    $rootScope.title = "Pantry App";
     Account.getByToken( $cookies.get('pantry_app_t') ).then(function(response){
-        $scope.user = response.data;
+        $rootScope.user = response.data;
     });
 
-    $scope.setUser = function(user) {
-        $scope.user = user;
+    $rootScope.setUser = function(user) {
+        $rootScope.user = user;
     };
 
-    $scope.logout = function() {
+    $rootScope.logout = function() {
         $cookies.remove('pantry_app_t');
-        $scope.setUser(null);
+        $rootScope.setUser(null);
         $location.path('/login');
     };
 
-    $scope.header="Well, howdy there...";
+    $rootScope.header="Well, howdy there...";
 }]);
 
 var accountService = angular.module("accountService", []);

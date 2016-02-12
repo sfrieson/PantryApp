@@ -1,21 +1,22 @@
 var ctrl = angular.module("mainController", ['accountService']);
 
-ctrl.controller("MainController", ['$scope', '$location', '$cookies', 'Account',
-function($scope, $location, $cookies, Account){
-
+ctrl.controller("MainController", ['$rootScope', '$scope', '$location', '$cookies', 'Account',
+function($rootScope, $scope, $location, $cookies, Account){
+    $rootScope.user = null;
+    $rootScope.title = "Pantry App";
     Account.getByToken( $cookies.get('pantry_app_t') ).then(function(response){
-        $scope.user = response.data;
+        $rootScope.user = response.data;
     });
 
-    $scope.setUser = function(user) {
-        $scope.user = user;
+    $rootScope.setUser = function(user) {
+        $rootScope.user = user;
     };
 
-    $scope.logout = function() {
+    $rootScope.logout = function() {
         $cookies.remove('pantry_app_t');
-        $scope.setUser(null);
+        $rootScope.setUser(null);
         $location.path('/login');
     };
 
-    $scope.header="Well, howdy there...";
+    $rootScope.header="Well, howdy there...";
 }]);

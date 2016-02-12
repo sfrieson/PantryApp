@@ -1,18 +1,20 @@
 var liCtrl = angular.module('listItemsController', ['ListItemsFactory', 'listsFactory']);
 
 liCtrl.controller('ListItemsController', [
+    '$rootScope',
     '$scope',
     '$routeParams',
     'ListItem',
     'List',
 
     function(
+        $rootScope,
         $scope,
         $routeParams,
         ListItem,
         List){
-    if (!$scope.user) {
-        $location.path('/login');
+    if (!$rootScope.user) {
+        $location.path('/signup');
     }
     ListItem.getList($routeParams.id).then(function(response){
         $scope.list = response.data;
@@ -62,18 +64,18 @@ liCtrl.controller('ListItemsController', [
                 console.log(response);
             });
         };
-        console.log($scope.user);
-        if(!$scope.user.lists){
+        console.log($rootScope.user);
+        if(!$rootScope.user.lists){
             List.getList().then(function(response){
                 console.log(response);
-                $scope.user.lists = response.data.lists;
-                $scope.user.lists.map(function(item){
+                $rootScope.user.lists = response.data.lists;
+                $rootScope.user.lists.map(function(item){
                     if (item.type === "inventory") inventory = item;
                     next();
                 });
             });
         } else {
-            $scope.user.lists.map(function(item){
+            $rootScope.user.lists.map(function(item){
                 if (item.type === "inventory") inventory = item;
             });
             next();

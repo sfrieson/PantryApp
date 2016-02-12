@@ -1,0 +1,32 @@
+<md-toolbar class="nav" layout="row">
+    <div class="md-display-1" flex="30">{{title}}</div>
+    <span flex></span>
+    <md-button class="md-raised md-accent" ng-click="loginModal($event)" flex="20">
+        Log-in
+    </md-button>
+
+</md-toolbar>
+<section class="bg row">
+    <article id="signup" class="md-whiteframe-6dp" flex="50">
+        <md-toolbar>
+
+            <h1>Sign up!</h1>
+        </md-toolbar>
+        <md-content class="content" >
+
+            <form action="/signup" method="post">
+                <md-input-container>
+                    <label>Username</label>
+                    <input type="text" name="account[username]">
+                </md-input-container>
+                <md-input-container>
+                    <label>Password</label>
+                    <input type="password" name="account[password]">
+                </md-input-container>
+                <md-input-container>
+                    <button class="md-button md-raised md-accent" type="submit">Submit</button>
+                </md-input-container>
+            </form>
+        </md-content>
+    </article>
+</section>

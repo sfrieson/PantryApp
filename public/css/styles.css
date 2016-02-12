@@ -1,0 +1,31 @@
+md-toolbar {
+    padding: 5px;
+}
+md-toolbar.nav{
+    align-items: flex-end;
+}
+section.bg {
+    background: url('/images/breakfast.jpg');
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+}
+
+.content {
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 5px;
+}
+
+.center {
+    margin: 0 auto;
+}
+
+#signup {
+    /*align-items: center;*/
+    border-radius: 8px;
+    overflow: hidden;
+    /*margin: 50px auto;*/
+}

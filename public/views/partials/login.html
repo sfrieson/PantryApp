@@ -1,27 +1,24 @@
-<md-toolbar>
-    <md-button>Log-in</md-button>
-</md-toolbar>
-<md-content>
 
-    <h1>Sign up!</h1>
-    <form action="/signup" method="post">
+<md-toolbar>{{title}} Log In</md-toolbar>
+
+<div class="content">
+
+    <form ng-submit="login()">
         <md-input-container>
             <label>Username</label>
-            <input type="text" name="account[username]">
-        </md-input-container>
+            <input type="text" ng-model="credentials.username" md-autofocus>
+        </md-input-container><br />
         <md-input-container>
             <label>Password</label>
-            <input type="password" name="account[password]">
+            <input type="password" ng-model="credentials.password">
         </md-input-container>
-        <md-input-container>
-            <md-button type="submit">Submit</md-button>
-        </md-input-container>
-    </form>
 
-    <h1>...or Log In</h1>
-    <form ng-submit="login()">
-        <input type="text" ng-model="credentials.username">
-        <input type="password" ng-model="credentials.password">
-        <input type="submit">
+        <md-dialog-actions layout="row">
+
+            <span flex></span>
+            <button type="submit" class="md-button md-raised">
+                Submit
+            </button>
+        </md-dialog-actions>
     </form>
-</md-content>
+</div>

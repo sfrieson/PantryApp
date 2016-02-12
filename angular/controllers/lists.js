@@ -1,18 +1,29 @@
 var listCtrl = angular.module("listsController", ['listsFactory']);
 
-listCtrl.controller('ListsController', ['$scope', '$http', "$location", 'List', function($scope, $http, $location, List){
-    if (!$scope.user) {
-        $location.path('/login');
+listCtrl.controller('ListsController', [
+    '$rootScope',
+    '$scope',
+    '$http',
+    "$location",
+    'List',
+    function(
+        $rootScope,
+        $scope,
+        $http,
+        $location,
+        List){
+    if (!$rootScope.user) {
+        $location.path('/signup');
     }
     // Get all lists when you arrive here.
     List.getList().then(function(response){
         $scope.lists = response.data.lists;
-        $scope.user.lists = $scope.lists;
+        $rootScope.user.lists = $scope.lists;
     });
 
     // ------------- CREATE -------------
     $scope.addList = function(){
-        $scope.newList.account_id = $scope.newList.account_id || $scope.user.id;
+        $scope.newList.account_id = $scope.newList.account_id || $rootScope.user.id;
         List.add($scope.newList).then(function(response){
             $scope.newList = {};
             $scope.lists.push(response.data.list);

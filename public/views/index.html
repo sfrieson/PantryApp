@@ -15,7 +15,7 @@
     <script src="js/app.js" charset="utf-8"></script>
 </head>
 <body ng-controller="MainController" layout="column">
-    <md-toobar ng-if="user">
+    <md-toobar class="nav" ng-if="user">
         <md-button ng-click="logout()">logout</md-button>
         <a href="#/settings">Settings</a>
         <h1>Hello, {{user.name}}!</h1>
