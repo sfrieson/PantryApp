@@ -1,5 +1,7 @@
 md-toolbar {
     padding: 5px;
+    display: flex;
+    /*align-items: flex-start;*/
 }
 md-toolbar.nav{
     align-items: flex-end;
@@ -12,15 +14,24 @@ section.bg {
     justify-content: center;
     height: 100vh;
 }
+a, a:active, a:visited  {
+    color:inherit;
+}
 
 .content {
     padding-left: 40px;
     padding-right: 40px;
     padding-top: 5px;
 }
-
+.full-containter {
+    height: 100vh;
+}
 .center {
     margin: 0 auto;
+}
+.logo {
+    text-decoration: none;
+    color: white;
 }
 
 #signup {

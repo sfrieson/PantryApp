@@ -15,11 +15,14 @@
     <script src="js/app.js" charset="utf-8"></script>
 </head>
 <body ng-controller="MainController" layout="column">
-    <md-toobar class="nav" ng-if="user">
-        <md-button ng-click="logout()">logout</md-button>
-        <a href="#/settings">Settings</a>
-        <h1>Hello, {{user.name}}!</h1>
-    </md-toobar>
+
+
+    <md-toolbar class="nav" layout="row" ng-if="user">
+        <a href="#/lists" class="logo md-display-1" flex="20">PantryApp</a>
+        <span flex></span>
+        <a href="#/settings"><button class="md-button" flex="10">Settings</button></a>
+        <button class="md-button" ng-click="logout()" flex="15">Logout</button>
+    </md-toolbar>
 
 <section ng-view></section>
 
