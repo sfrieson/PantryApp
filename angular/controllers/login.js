@@ -16,6 +16,8 @@ ctrl.controller("LoginController", [
         Auth,
         $mdMedia,
         $mdDialog){
+
+    if($rootScope.user){  $location.path('/lists');  }
     $scope.credentials = {};
 
     $scope.loginModal = function(e) {

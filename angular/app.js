@@ -32,6 +32,10 @@ app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $md
             templateUrl: '/views/partials/team.html',
             controller: 'ListItemsController'
         })
+        .when('/join-team', {
+            templateUrl: '/views/partials/signup.html',
+            controller: 'LoginController'
+        })
         .when('/settings', {
             templateUrl: '/views/partials/settings.html',
             controller: 'AccountsController'
