@@ -1,4 +1,12 @@
-var app = angular.module("PantryApp", ['ngCookies', 'ngRoute', 'mainController', 'accountsController', 'loginController', "listsController", 'listItemsController']);
+var app = angular.module('PantryApp', [
+    'ngCookies',
+    'ngRoute',
+    'mainController',
+    'accountsController',
+    'loginController',
+    'listsController',
+    'listItemsController'
+]);
 
 app.config(['$routeProvider', function( $routeProvider) {
     $routeProvider
@@ -8,25 +16,25 @@ app.config(['$routeProvider', function( $routeProvider) {
         })
         .when('/lists', {
             templateUrl: '/views/partials/lists.html',
-            controller: "ListsController"
+            controller: 'ListsController'
         })
         .when('/lists/new', {
             templateUrl: '/views/partials/new_list.html',
-            controller: "ListsController"
+            controller: 'ListsController'
         })
         .when('/lists/:id', {
             templateUrl: 'views/partials/list.html',
-            controller: "ListItemsController"
+            controller: 'ListItemsController'
         })
         .when('/team', {
             templateUrl: 'views/partials/team.html',
-            controller: "ListItemsController"
+            controller: 'ListItemsController'
         })
         .when('/settings', {
             templateUrl: 'views/partials/settings.html',
-            controller: "AccountsController"
+            controller: 'AccountsController'
         })
         .otherwise({
-            redirectTo: "/login"
+            redirectTo: '/login'
         });
 }]);

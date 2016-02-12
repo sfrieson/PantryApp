@@ -1,4 +1,12 @@
-var app = angular.module("PantryApp", ['ngCookies', 'ngRoute', 'mainController', 'accountsController', 'loginController', "listsController", 'listItemsController']);
+var app = angular.module('PantryApp', [
+    'ngCookies',
+    'ngRoute',
+    'mainController',
+    'accountsController',
+    'loginController',
+    'listsController',
+    'listItemsController'
+]);
 
 app.config(['$routeProvider', function( $routeProvider) {
     $routeProvider
@@ -8,26 +16,26 @@ app.config(['$routeProvider', function( $routeProvider) {
         })
         .when('/lists', {
             templateUrl: '/views/partials/lists.html',
-            controller: "ListsController"
+            controller: 'ListsController'
         })
         .when('/lists/new', {
             templateUrl: '/views/partials/new_list.html',
-            controller: "ListsController"
+            controller: 'ListsController'
         })
         .when('/lists/:id', {
             templateUrl: 'views/partials/list.html',
-            controller: "ListItemsController"
+            controller: 'ListItemsController'
         })
         .when('/team', {
             templateUrl: 'views/partials/team.html',
-            controller: "ListItemsController"
+            controller: 'ListItemsController'
         })
         .when('/settings', {
             templateUrl: 'views/partials/settings.html',
-            controller: "AccountsController"
+            controller: 'AccountsController'
         })
         .otherwise({
-            redirectTo: "/login"
+            redirectTo: '/login'
         });
 }]);
 
@@ -55,9 +63,19 @@ accountsCtrl.controller('AccountsController', ['$scope', '$location', 'Account',
     };
 }]);
 
-var liCtrl = angular.module('listItemsController', ['ListItemsFactory']);
+var liCtrl = angular.module('listItemsController', ['ListItemsFactory', 'listsFactory']);
 
-liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', function($scope, $routeParams, ListItem){
+liCtrl.controller('ListItemsController', [
+    '$scope',
+    '$routeParams',
+    'ListItem',
+    'List',
+
+    function(
+        $scope,
+        $routeParams,
+        ListItem,
+        List){
     if (!$scope.user) {
         $location.path('/login');
     }
@@ -103,10 +121,28 @@ liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', 
     };
 
     $scope.moveToInventory = function() {
-        var fakeInventory={id:1};
-        ListItem.switchList(fakeInventory, $scope.list.items).then(function(response){
-            console.log(response);
-        });
+        var inventory;
+        var next = function() {
+            ListItem.switchList(inventory, $scope.list.items).then(function(response){
+                console.log(response);
+            });
+        };
+        console.log($scope.user);
+        if(!$scope.user.lists){
+            List.getList().then(function(response){
+                console.log(response);
+                $scope.user.lists = response.data.lists;
+                $scope.user.lists.map(function(item){
+                    if (item.type === "inventory") inventory = item;
+                    next();
+                });
+            });
+        } else {
+            $scope.user.lists.map(function(item){
+                if (item.type === "inventory") inventory = item;
+            });
+            next();
+        }
     };
 }]);
 
@@ -119,11 +155,12 @@ listCtrl.controller('ListsController', ['$scope', '$http', "$location", 'List', 
     // Get all lists when you arrive here.
     List.getList().then(function(response){
         $scope.lists = response.data.lists;
+        $scope.user.lists = $scope.lists;
     });
 
     // ------------- CREATE -------------
     $scope.addList = function(){
-        console.log("Controller $scope.newList =\n", $scope.newList);
+        $scope.newList.account_id = $scope.newList.account_id || $scope.user.id;
         List.add($scope.newList).then(function(response){
             $scope.newList = {};
             $scope.lists.push(response.data.list);
@@ -283,7 +320,7 @@ listModel.factory('List', ['$http', function($http){
         return $http.post('/lists', {list: newList});
     };
     // ------------- READ -------------
-    List.getList = function (id) {
+    List.getList = function (id) { //All lists on user if no id.
         id = id || "";
         return $http.get('/lists/'+id);
     };

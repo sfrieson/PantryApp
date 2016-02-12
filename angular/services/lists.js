@@ -8,7 +8,7 @@ listModel.factory('List', ['$http', function($http){
         return $http.post('/lists', {list: newList});
     };
     // ------------- READ -------------
-    List.getList = function (id) {
+    List.getList = function (id) { //All lists on user if no id.
         id = id || "";
         return $http.get('/lists/'+id);
     };

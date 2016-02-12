@@ -7,11 +7,12 @@ listCtrl.controller('ListsController', ['$scope', '$http', "$location", 'List', 
     // Get all lists when you arrive here.
     List.getList().then(function(response){
         $scope.lists = response.data.lists;
+        $scope.user.lists = $scope.lists;
     });
 
     // ------------- CREATE -------------
     $scope.addList = function(){
-        console.log("Controller $scope.newList =\n", $scope.newList);
+        $scope.newList.account_id = $scope.newList.account_id || $scope.user.id;
         List.add($scope.newList).then(function(response){
             $scope.newList = {};
             $scope.lists.push(response.data.list);

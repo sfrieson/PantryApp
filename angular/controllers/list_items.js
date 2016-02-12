@@ -1,6 +1,16 @@
-var liCtrl = angular.module('listItemsController', ['ListItemsFactory']);
+var liCtrl = angular.module('listItemsController', ['ListItemsFactory', 'listsFactory']);
 
-liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', function($scope, $routeParams, ListItem){
+liCtrl.controller('ListItemsController', [
+    '$scope',
+    '$routeParams',
+    'ListItem',
+    'List',
+
+    function(
+        $scope,
+        $routeParams,
+        ListItem,
+        List){
     if (!$scope.user) {
         $location.path('/login');
     }
@@ -46,9 +56,27 @@ liCtrl.controller('ListItemsController', ['$scope', '$routeParams', 'ListItem', 
     };
 
     $scope.moveToInventory = function() {
-        var fakeInventory={id:1};
-        ListItem.switchList(fakeInventory, $scope.list.items).then(function(response){
-            console.log(response);
-        });
+        var inventory;
+        var next = function() {
+            ListItem.switchList(inventory, $scope.list.items).then(function(response){
+                console.log(response);
+            });
+        };
+        console.log($scope.user);
+        if(!$scope.user.lists){
+            List.getList().then(function(response){
+                console.log(response);
+                $scope.user.lists = response.data.lists;
+                $scope.user.lists.map(function(item){
+                    if (item.type === "inventory") inventory = item;
+                    next();
+                });
+            });
+        } else {
+            $scope.user.lists.map(function(item){
+                if (item.type === "inventory") inventory = item;
+            });
+            next();
+        }
     };
 }]);
