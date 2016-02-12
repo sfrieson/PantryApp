@@ -1,3 +1,4 @@
+
 var app = angular.module('PantryApp', [
     'ngCookies',
     'ngRoute',
@@ -5,10 +6,11 @@ var app = angular.module('PantryApp', [
     'accountsController',
     'loginController',
     'listsController',
-    'listItemsController'
+    'listItemsController',
+    'ngMaterial'
 ]);
 
-app.config(['$routeProvider', function( $routeProvider) {
+app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $mdThemingProvider) {
     $routeProvider
         .when('/login', {
             templateUrl: '/views/partials/login.html',
@@ -37,4 +39,8 @@ app.config(['$routeProvider', function( $routeProvider) {
         .otherwise({
             redirectTo: '/login'
         });
+
+    $mdThemingProvider.theme('default')
+        .primaryPalette('red')
+        .accentPalette('light-green');
 }]);

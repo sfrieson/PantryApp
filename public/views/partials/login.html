@@ -1,13 +1,27 @@
-<h1>Sign up!</h1>
-<form action="/signup" method="post">
-    <input type="text" name="account[username]" placeholder="Username">
-    <input type="password" name="account[password]" placeholder="Password">
-    <input type="submit">
-</form>
+<md-toolbar>
+    <md-button>Log-in</md-button>
+</md-toolbar>
+<md-content>
 
-<h1>...or Log In</h1>
-<form ng-submit="login()">
-    <input type="text" ng-model="credentials.username">
-    <input type="password" ng-model="credentials.password">
-    <input type="submit">
-</form>
+    <h1>Sign up!</h1>
+    <form action="/signup" method="post">
+        <md-input-container>
+            <label>Username</label>
+            <input type="text" name="account[username]">
+        </md-input-container>
+        <md-input-container>
+            <label>Password</label>
+            <input type="password" name="account[password]">
+        </md-input-container>
+        <md-input-container>
+            <md-button type="submit">Submit</md-button>
+        </md-input-container>
+    </form>
+
+    <h1>...or Log In</h1>
+    <form ng-submit="login()">
+        <input type="text" ng-model="credentials.username">
+        <input type="password" ng-model="credentials.password">
+        <input type="submit">
+    </form>
+</md-content>
