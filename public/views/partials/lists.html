@@ -1,9 +1,27 @@
-<div id="list-list">
-    Lists:
-    <ul>
-        <li><a href="#/lists/new">New List</a></li>
-        <li ng-repeat="list in lists">
-            <a href="#/lists/{{list.id}}">{{list.name}}</a> <a href="javascript:;" ng-if="list.type !=='inventory'" ng-click="deleteList(list.id)">x</a>
-        </li>
-    </ul>
+<div id="list-list" class="content">
+    <span flex></span>
+    <div class="md-display-2">
+        Lists:
+    </div>
+    <md-content class="content">
+        <a href="#/lists/new">New List</a>
+        <div class="flex-container" layout="row">
+            <section ng-repeat="list in lists" flex="33">
+                <div md-whiteframe="2">
+                    <div layout="row">
+                        <div flex="80">
+                            <a href="#/lists/{{list.id}}">{{list.name}}</a><br />
+                            {{list.description}}
+                        </div>
+                        <div layout="column" flex="20">
+                            <md-button class="md-fab md-mini md-primary" ng-if="list.type !== 'inventory'" ng-click="deleteList(list.id)">
+                                <md-icon md-svg-src="images/svg/x.svg"></md-icon>
+                            </md-button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </md-content>
+    <span flex></span>
 </div>

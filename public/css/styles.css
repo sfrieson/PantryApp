@@ -33,10 +33,18 @@ a, a:active, a:visited  {
     text-decoration: none;
     color: white;
 }
-
+.flex-container {
+    flex-wrap: wrap;
+}
 #signup {
     /*align-items: center;*/
     border-radius: 8px;
     overflow: hidden;
     /*margin: 50px auto;*/
+}
+
+*[class*='md-whiteframe'] {
+    border-radius: 8px;
+    padding: 8px;
+    margin: 5px;
 }
