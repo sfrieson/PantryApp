@@ -20,20 +20,28 @@ Account.new = function(newAcct, callback) {
         var hash = bcrypt.hashSync(newAcct.password, 8);
 
 
-        var text = 'INSERT INTO accounts(name, passwordhash, team_id, type, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *';
+        var text = "INSERT INTO accounts(name, passwordhash, team_id, type, created_at, updated_at) " +
+        "VALUES ($1, $2, $3, $4, $5, $6) " +
+        "RETURNING *";
+
         client.query(text, [newAcct.username, hash, newAcct.team_id, "user", now, now], function(err, result){
             done();
             if(err){return callback(err);}
             console.log("PG.Account.new: User Created");
             user = result.rows[0];
 
-            callback(null, user);
-
             //If this user has no team, create an inventory for them.
-            if(!user.team_id) List.newInventory(user, function(err, response){
-                if(err)return console.log(err);
-                console.log(response);
-            });
+            if(!user.team_id) {
+                List.newInventory(user, function(err, response){
+                    if(err)return console.log(err);
+                    console.log(response);
+                    user.lists=[response];
+                    user.inventory_id = response.id;
+                    callback(null, user);
+                });
+            } else {
+                callback(null, user);
+            }
         });
     });
 };

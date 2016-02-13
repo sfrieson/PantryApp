@@ -1,3 +1,6 @@
+body {
+    background-color: #eee;
+}
 md-toolbar {
     padding: 5px;
     display: flex;
@@ -22,6 +25,7 @@ a, a:active, a:visited  {
     padding-left: 40px;
     padding-right: 40px;
     padding-top: 5px;
+    background-color: rgba(0,0,0,0);
 }
 .full-containter {
     height: 100vh;
@@ -47,4 +51,5 @@ a, a:active, a:visited  {
     border-radius: 8px;
     padding: 8px;
     margin: 5px;
+    background-color: white;
 }
