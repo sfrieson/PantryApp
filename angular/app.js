@@ -7,6 +7,7 @@ var app = angular.module('PantryApp', [
     'loginController',
     'listsController',
     'listItemsController',
+    'foodsController',
     'ngMaterial'
 ]);
 

@@ -7,6 +7,7 @@ var app = angular.module('PantryApp', [
     'loginController',
     'listsController',
     'listItemsController',
+    'foodsController',
     'ngMaterial'
 ]);
 
@@ -82,12 +83,44 @@ accountsCtrl.controller('AccountsController', [
     };
 }]);
 
+var foodCtrl = angular.module("foodsController", ['ListItemsFactory']);
+foodCtrl.controller("FoodsController", [
+    '$scope',
+    '$mdDialog',
+    'ListItem',
+    'listItem',
+    'data',
+    function(
+        $scope,
+        $mdDialog,
+        ListItem,
+        listItem,
+        data){
+            console.log('li:', listItem);
+            $scope.listItem = listItem;
+            $scope.data = data;
+            $scope.heading = "It's working!";
+
+            $scope.saveFood = function(){
+                console.log($scope.nbd_no);
+                ListItem.edit($scope.listItem).then(function(response){
+                    console.log("Move along... here's your response:", response);
+                    $mdDialog.hide();
+                });
+            };
+            $scope.closeModal = function(){
+                $mdModal.hide();
+            }
+        }]);
+
 var liCtrl = angular.module('listItemsController', ['ListItemsFactory', 'listsFactory']);
 
 liCtrl.controller('ListItemsController', [
     '$rootScope',
     '$scope',
     '$routeParams',
+    '$mdMedia',
+    '$mdDialog',
     'ListItem',
     'List',
 
@@ -95,6 +128,8 @@ liCtrl.controller('ListItemsController', [
         $rootScope,
         $scope,
         $routeParams,
+        $mdMedia,
+        $mdDialog,
         ListItem,
         List){
     if (!$rootScope.user) {
@@ -118,28 +153,52 @@ liCtrl.controller('ListItemsController', [
             $scope.list.items.splice(index, 1);
         });
     };
-    $scope.findFood = function(listItem) {
+    $scope.findFood = function(e, listItem) {
+        var useFullScreen;
         if(listItem.ndb_no) {
             ListItem.nutrition(listItem.ndb_no).then(function(response){
-                $scope.listItem = listItem;
-                console.log(response.data);
-                $scope.nutrients = response.data;
+                useFullScreen = ($mdMedia('sm') || $mdMedia('xs'));
+                $mdDialog.show({
+                    controller: 'FoodsController',
+                    templateUrl: '/views/partials/nutrients.html',
+                    parent: angular.element(document.body),
+                    targetEvent: e,
+                    clickOutsideToClose: true,
+                    fullscreen: useFullScreen,
+                    locals: {
+                        listItem: listItem,
+                        data: response.data
+                    }
+                });
             });
+
         } else {
+            var results;
             ListItem.findFood(listItem.name).then(function(response){
-                console.log(response);
-                $scope.listItem = listItem;
-                $scope.results = response.data;
+                useFullScreen = ($mdMedia('sm') || $mdMedia('xs'));
+                $mdDialog.show({
+                    controller: 'FoodsController',
+                    templateUrl: '/views/partials/food-select.html',
+                    parent: angular.element(document.body),
+                    targetEvent: e,
+                    clickOutsideToClose: true,
+                    fullscreen: useFullScreen,
+                    locals: {
+                        listItem: listItem,
+                        data: response.data
+                    }
+                });
             });
         }
     };
-    $scope.saveFood = function(){
-        ListItem.edit($scope.listItem).then(function(response){
-            console.log("Move along... here's your response:", response);
-            $scope.listItem = null;
-            $scope.results = null;
-        });
-    };
+
+    // $scope.saveFood = function(){
+    //     ListItem.edit($scope.listItem).then(function(response){
+    //         console.log("Move along... here's your response:", response);
+    //         $scope.listItem = null;
+    //         $scope.results = null;
+    //     });
+    // };
 
     $scope.moveToInventory = function() {
         var inventory;

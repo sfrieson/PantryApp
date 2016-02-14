@@ -14,9 +14,9 @@
                             {{list.description}}
                         </div>
                         <div layout="column" flex="20">
-                            <md-button class="md-fab md-mini md-primary" aria-label="close" ng-if="list.type !== 'inventory'" ng-click="deleteList(list.id)">
+                            <button class="md-button md-fab md-mini md-primary" aria-label="close" ng-if="list.type !== 'inventory'" ng-click="deleteList(list.id)">
                                 <md-icon md-svg-src="images/svg/x.svg"></md-icon>
-                            </md-button>
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -1,25 +1,42 @@
-<div id="list">
-    <a href="#/lists">All Lists</a><br />
-    Current List:
-    {{list.name}}<br />
+<div id="list" class="content">
+    <a href="#/lists">All Lists</a>
+    <div class="md-display-2">{{list.name}}</div>
     {{list.description}}
     <form ng-submit="addListItem()">
-        <input type="text" ng-model="newListItem.name" placeholder="name">
-        <input type="text" ng-model="newListItem.desc" placeholder="description">
-        <input type="number" ng-model="newListItem.qty" placeholder="quantity">
-        <input type="text" ng-model="newListItem.notes" placeholder="notes">
-        <input type="submit">
+        <md-input-container>
+            <label>New item</label>
+            <input type="text" ng-model="newListItem.name">
+        </md-input-container>
+        <md-input-container>
+            <label>Description</label>
+            <input type="text" ng-model="newListItem.desc">
+        </md-input-container>
+        <md-input-container>
+            <label>Quantity</label>
+            <input type="number" ng-model="newListItem.qty">
+        </md-input-container>
+        <md-input-container>
+            <label>Notes</label>
+            <input type="text" ng-model="newListItem.notes">
+        </md-input-container>
+        <md-input-container>
+            <input class="md-button md-raised md-primary" aria-label="Add Item" type="submit" value="Add">
+        </md-input-container>
     </form>
-    <ul>
-        <li class="items" ng-repeat="item in list.items">
-            {{item.qty}} - <span ng-click="findFood(item)">{{item.name}}</span>
+    <button class="md-button" ng-click="purchased = !purchased">Purchased</button>
+    <button class="md-button" ng-show="purchased" ng-click="moveToInventory()">Move to inventory</button>
+
+
+    <md-list>
+        <md-list-item class="items" ng-repeat="item in list.items">
+            {{item.qty}} - <span ng-click="findFood($event, item)">{{item.name}}</span>
             <span ng-click="delete(item.id, $index)">x</span>
-        </li>
+        </md-list-item>
+
         <div ng-if="results">
             Select the food from USDA that best matches:
             Your input: {{listItem.name}}
             <form ng-submit="saveFood()">
-
                 <input type="submit" value="Select">
                 <select ng-model="listItem.ndb_no">
                     <option ng-repeat="result in results" value="{{result.ndb_no}}">
@@ -28,6 +45,7 @@
                 </select>
             </form>
         </div>
+
         <div ng-show="nutrients">
             <a href="javascript:;" ng-click="nutrients = !nutrients">X</a>
             USDA info on {{listItem.name}}.<br />
@@ -35,7 +53,7 @@
                 <b>{{nutrient.nutrdesc}}</b> - {{nutrient.nutr_val}}{{nutrient.units}}
             </div>
         </div>
-        <button ng-click="purchased = !purchased">Purchased</button>
-        <button ng-show="purchased" ng-click="moveToInventory()">Move to inventory</button>
-    </ul>
+            <button class="md-button" ng-click="purchased = !purchased">Purchased</button>
+            <button class="md-button" ng-show="purchased" ng-click="moveToInventory()">Move to inventory</button>
+    </md-list>
 </div>

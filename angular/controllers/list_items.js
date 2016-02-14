@@ -4,6 +4,8 @@ liCtrl.controller('ListItemsController', [
     '$rootScope',
     '$scope',
     '$routeParams',
+    '$mdMedia',
+    '$mdDialog',
     'ListItem',
     'List',
 
@@ -11,6 +13,8 @@ liCtrl.controller('ListItemsController', [
         $rootScope,
         $scope,
         $routeParams,
+        $mdMedia,
+        $mdDialog,
         ListItem,
         List){
     if (!$rootScope.user) {
@@ -34,28 +38,52 @@ liCtrl.controller('ListItemsController', [
             $scope.list.items.splice(index, 1);
         });
     };
-    $scope.findFood = function(listItem) {
+    $scope.findFood = function(e, listItem) {
+        var useFullScreen;
         if(listItem.ndb_no) {
             ListItem.nutrition(listItem.ndb_no).then(function(response){
-                $scope.listItem = listItem;
-                console.log(response.data);
-                $scope.nutrients = response.data;
+                useFullScreen = ($mdMedia('sm') || $mdMedia('xs'));
+                $mdDialog.show({
+                    controller: 'FoodsController',
+                    templateUrl: '/views/partials/nutrients.html',
+                    parent: angular.element(document.body),
+                    targetEvent: e,
+                    clickOutsideToClose: true,
+                    fullscreen: useFullScreen,
+                    locals: {
+                        listItem: listItem,
+                        data: response.data
+                    }
+                });
             });
+
         } else {
+            var results;
             ListItem.findFood(listItem.name).then(function(response){
-                console.log(response);
-                $scope.listItem = listItem;
-                $scope.results = response.data;
+                useFullScreen = ($mdMedia('sm') || $mdMedia('xs'));
+                $mdDialog.show({
+                    controller: 'FoodsController',
+                    templateUrl: '/views/partials/food-select.html',
+                    parent: angular.element(document.body),
+                    targetEvent: e,
+                    clickOutsideToClose: true,
+                    fullscreen: useFullScreen,
+                    locals: {
+                        listItem: listItem,
+                        data: response.data
+                    }
+                });
             });
         }
     };
-    $scope.saveFood = function(){
-        ListItem.edit($scope.listItem).then(function(response){
-            console.log("Move along... here's your response:", response);
-            $scope.listItem = null;
-            $scope.results = null;
-        });
-    };
+
+    // $scope.saveFood = function(){
+    //     ListItem.edit($scope.listItem).then(function(response){
+    //         console.log("Move along... here's your response:", response);
+    //         $scope.listItem = null;
+    //         $scope.results = null;
+    //     });
+    // };
 
     $scope.moveToInventory = function() {
         var inventory;

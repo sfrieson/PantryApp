@@ -1,9 +1,20 @@
-Select the food from USDA that best matches:
-Your input: {{listItem.name}}
-<form ng-submit="saveFood()">
-    <input type="submit" value="Select">
-    <div ng-repeat="result in results">
-        <input type="radio" ng-model="ndb_no" ng-value="result.ndb_no">
-        <label for="">{{result.long_desc}}</label>
+<div class="content">
+    <div class="md-headline">
+        {{listItem.name}}
     </div>
-</form>
+    <div class="md-heading">Select the food from USDA that best matches:</div>
+
+    <div ng-if="!data.length">
+        Sorry... no results.<br />
+        <button class="md-button" ng-click="$mdDialog.hide()">Close</button>
+    </div>
+
+    <form ng-submit="saveFood()" ng-if="data.length" layout="column">
+        <md-input-container>
+            <md-select ng-model="listItem.ndb_no" aria-label="Options">
+                <md-option ng-repeat="result in data" ng-value="result.ndb_no" flex="100">{{result.long_desc}}</md-option>
+            </md-select>
+        </md-input-container><br />
+        <input class="md-button" type="submit" value="Select">
+    </form>
+</div>
