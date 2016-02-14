@@ -24,6 +24,6 @@ foodCtrl.controller("FoodsController", [
                 });
             };
             $scope.closeModal = function(){
-                $mdModal.hide();
+                $mdDialog.hide();
             }
         }]);

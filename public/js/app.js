@@ -109,7 +109,7 @@ foodCtrl.controller("FoodsController", [
                 });
             };
             $scope.closeModal = function(){
-                $mdModal.hide();
+                $mdDialog.hide();
             }
         }]);
 
@@ -232,13 +232,14 @@ listCtrl.controller('ListsController', [
     '$rootScope',
     '$scope',
     '$http',
-    "$location",
+    '$location',
     'List',
     function(
         $rootScope,
         $scope,
         $http,
         $location,
+
         List){
     if (!$rootScope.user) {
         $location.path('/signup');
@@ -283,6 +284,7 @@ listCtrl.controller('ListsController', [
     $scope.deleteListItem = function(id){
         List.deleteListItem(id).then(function(response){console.log(response);});
     };
+
 }]);
 
 var ctrl = angular.module("loginController", ['authService']);

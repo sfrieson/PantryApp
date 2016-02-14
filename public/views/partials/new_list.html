@@ -1,12 +1,27 @@
 <div id="new-list">
-    <a href="javascript:;" ng-click="show = 'lists'">X</a><br />
-    <form ng-submit="addList()">
-        <input type="text" ng-model="newList.name" placeholder="name">
-        <input type="text" ng-model="newList.desc" placeholder="description">
-        <select ng-model="newList.account_id">
-            <option value="{{user.id}}" selected>Your Lists</option>
-            <option ng-if="user.team_id" value="{{user.team_id}}">Team Lists</option>
-        </select>
-        <input type="submit">
-    </form>
+    <div class="content">
+
+        <div class="md-headline">New List</div><span flex></span>
+
+        <form ng-submit="addList()">
+            <md-input-container layout="row">
+                <label>List name</label>
+                <input type="text" ng-model="newList.name">
+            </md-input-container>
+            <md-input-container layout="row">
+                <label>Description</label>
+                <input type="text" ng-model="newList.desc">
+            </md-input-container>
+            <md-input-container layout="row">
+                <md-select ng-model="newList.account_id" aria-label="Your or Team List" flex>
+                    <md-option value="{{user.id}}" selected>Your Lists</md-option>
+                    <md-option ng-if="user.team_id" value="{{user.team_id}}">Team Lists</md-option>
+                </md-select>
+            </md-input-container>
+            <md-input-container layout="row">
+                <span flex></span>
+                <button class="md-button md-accent md-raised" type="submit" aria-label="Add list">Add List</button>
+            </md-input-container>
+        </form>
+    </div>
 </div>

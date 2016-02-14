@@ -1,6 +1,9 @@
-<h2>Settings</h2>
+<div class="content">
 
-<button ng-click="createTeam()" ng-if="!user.team_id">Create Team</button>
-<button ng-click="invite()" ng-if="user.team_id">Invite others to the Team</button>
-<div ng-show="url">Send them this link to sign up at: {{url}}</div>
-<button ng-click="removeAccount()">Remove Account</button>
+    <h2 class="md-display-1">Settings</h2>
+
+    <button class="md-button md-raised" ng-click="createTeam()" ng-if="!user.team_id">Create Team</button>
+    <button class="md-button md-raised" ng-click="invite()" ng-if="user.team_id">Invite others to the Team</button>
+    <div ng-show="url">Send them this link to sign up at: {{url}}</div>
+    <button class="md-button md-raised" ng-click="removeAccount()">Remove Account</button>
+</div>
