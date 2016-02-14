@@ -6,7 +6,7 @@
     <md-content class="content">
         <a href="#/lists/new">New List</a>
         <div class="flex-container" layout="row">
-            <section ng-repeat="list in lists" flex="33">
+            <section ng-repeat="list in lists | orderBy: ['type', 'created_at']" flex="33">
                 <div md-whiteframe="2">
                     <div layout="row">
                         <div flex="80">
