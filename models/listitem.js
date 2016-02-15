@@ -44,23 +44,80 @@ ListItem.get = function(list, callback){
     });
 };
 
-ListItem.nutrition = function(ndb_no, callback){
+ListItem.nutrition = function(input, callback){
+    var rollback = function(client, done) {
+        client.query('ROLLBACK', function(err) {
+            //If there's an error, rollback.
+            console.log("ROLLBACK ROLLBACK ROLLBACK ROLLBACK ROLLBACK ROLLBACK");
+            callback(err);
+            return done(err);
+        });
+    };
+
+    var text = "SELECT * FROM list_items " +
+    "INNER JOIN food_des USING (ndb_no) " +
+    "INNER JOIN nutr_data USING (ndb_no) " +
+    "INNER JOIN nutr_def USING (nutr_no) " +
+    "WHERE ndb_no LIKE $1";
+
+    var i = 0;
+    var itemsArr = [];
+
+    var query = function query (list, client, done){
+        var data = [list[i].ndb_no];
+        client.query(text, data, function(err,response){
+            if(err){
+                console.log("\nRecursive nutrients, iteration " + i + ". Error:\n", err);
+                return rollback(client, done);
+            }
+            itemsArr.push(response);
+
+            i++;
+            if(i < list.length){
+                query(list, client, done);
+            } else {
+                //Done working;
+                client.query('COMMIT', done);
+                var result = {list: itemsArr};
+
+                sumNutrients(result, callback);
+                // return callback(null, result);
+            }
+        });
+    };
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message: "Connection error", error: err});
         console.log("PG.ListItem.nutrition: Connected");
 
-        var text = "SELECT * FROM list_items " +
-        "INNER JOIN food_des USING (ndb_no) " +
-        "INNER JOIN nutr_data USING (ndb_no) " +
-        "INNER JOIN nutr_def USING (nutr_no) " +
-        "WHERE ndb_no LIKE $1";
+        if(typeof input === "string"){
+            var ndb_no = input;
+            client.query(text, [ndb_no], function(err, result){
+                done();
+                if (err) {
+                    console.log(err);
+                    return callback({message: "Select error", error: err});
+                }
+                console.log("PG.ListItem.nutrition: Select successful");
+                // console.log(result);
+                callback(null, result.rows);
+            });
+        }
 
-        client.query(text, [ndb_no], function(err, result){
-            done();
-            if (err) return callback({message: "Select error", error: err});
-            console.log("PG.ListItem.nutrition: Select successful");
-            callback(null, result.rows);
-        });
+        if(typeof input === "object"){
+            console.log("Array-----------------");
+
+            pg.connect(connection, function(err, client, done) {
+                if(err) throw err;
+                console.log("PG.List.addItems: Connected");
+
+                client.query('BEGIN', function(err) {
+                    if(err) return rollback(client, done);
+                    process.nextTick(function() {
+                        query(input, client, done);
+                    });
+                });
+            });
+        }
     });
 };
 
@@ -128,7 +185,7 @@ ListItem.switchList = function(targetList, itemArr, callback) {
 
             i++;
             if(i < itemArr.length){
-                query(client);
+                query(client, done);
             } else {
                 //Done working;
                 client.query('COMMIT', done);
@@ -198,3 +255,30 @@ ListItem.findFood = function (search, callback){
     });
 };
 module.exports = ListItem;
+
+function sumNutrients(result, callback) {
+    result.totals = {};
+    //For each list item
+    for (var i = 0; i < result.list.length; i++) {
+        var item = result.list[i];
+
+
+        //for each nutrient on it
+        for (var j = 0; j < item.rows.length; j++) {
+            var nutr = item.rows[j];
+            if (!result.totals[nutr.nutrdesc]) {
+                result.totals[nutr.nutrdesc] = {
+                    nutrdesc: nutr.nutrdesc,
+                    units: nutr.units,
+                    nutr_val: parseFloat(nutr.nutr_val)
+                };
+            } else {
+                result.totals[nutr.nutrdesc].nutr_val += parseFloat(nutr.nutr_val);
+            }
+
+            // result.totals.push(nutr);
+        }
+    }
+    // result.totals = [{a:5}];
+    callback(null, result);
+}
