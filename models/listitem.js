@@ -53,7 +53,7 @@ ListItem.nutrition = function(input, callback){
             return done(err);
         });
     };
-
+    //same query for all
     var text = "SELECT * FROM list_items " +
     "INNER JOIN food_des USING (ndb_no) " +
     "INNER JOIN nutr_data USING (ndb_no) " +
@@ -63,15 +63,8 @@ ListItem.nutrition = function(input, callback){
     var i = 0;
     var itemsArr = [];
 
-    var query = function query (list, client, done){
-        var data = [list[i].ndb_no];
-        client.query(text, data, function(err,response){
-            if(err){
-                console.log("\nRecursive nutrients, iteration " + i + ". Error:\n", err);
-                return rollback(client, done);
-            }
-            itemsArr.push(response);
-
+    var query = function (list, client, done){
+        var next = function() {
             i++;
             if(i < list.length){
                 query(list, client, done);
@@ -83,8 +76,23 @@ ListItem.nutrition = function(input, callback){
                 sumNutrients(result, callback);
                 // return callback(null, result);
             }
-        });
+        };
+
+        if(list[i].ndb_no) {
+            var data = [list[i].ndb_no];
+            client.query(text, data, function(err,response){
+                if(err){
+                    console.log("\nRecursive nutrients, iteration " + i + ". Error:\n", err);
+                    return rollback(client, done);
+                }
+                itemsArr.push(response);
+                next();
+            });
+        } else {
+            next();
+        }
     };
+    
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message: "Connection error", error: err});
         console.log("PG.ListItem.nutrition: Connected");
@@ -172,7 +180,7 @@ ListItem.switchList = function(targetList, itemArr, callback) {
     //to be called recursively until array is up.
     var i=0;
     var responseArr = [];
-    var query = function query (client, done) {
+    var query = function (client, done) {
         console.log("\nTarget list:\n", targetList, "\nitemArr:\n", itemArr, "\ni:\n", i, "\nitemArr[i]\n", itemArr[i]);
         var text = "UPDATE list_items SET list_id = $1 WHERE id = $2";
         var data = [targetList.id, itemArr[i].id];
