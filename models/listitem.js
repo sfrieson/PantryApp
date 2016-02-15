@@ -262,23 +262,22 @@ function sumNutrients(result, callback) {
     for (var i = 0; i < result.list.length; i++) {
         var item = result.list[i];
 
-
         //for each nutrient on it
         for (var j = 0; j < item.rows.length; j++) {
             var nutr = item.rows[j];
+            //if this nutrient isn't already here, then make it!
             if (!result.totals[nutr.nutrdesc]) {
                 result.totals[nutr.nutrdesc] = {
                     nutrdesc: nutr.nutrdesc,
                     units: nutr.units,
                     nutr_val: parseFloat(nutr.nutr_val)
                 };
+            //Otherwise, just add your value to the existing value
             } else {
                 result.totals[nutr.nutrdesc].nutr_val += parseFloat(nutr.nutr_val);
             }
-
-            // result.totals.push(nutr);
         }
     }
-    // result.totals = [{a:5}];
+    console.log(result.totals);
     callback(null, result);
 }
