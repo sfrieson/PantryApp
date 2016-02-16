@@ -1,5 +1,8 @@
 var pg = require('pg');
-var connection = "postgres://localhost/pantryapp";
+
+require('dotenv').config();
+var connection = process.env.PGCONNECT;
+
 
 var List = {};
 var ListItem = require("./listitem.js");
@@ -216,7 +219,7 @@ ListItem.switchList = function(targetList, itemArr, callback) {
 
     pg.connect(connection, function(err, client, done) {
         if(err) throw err;
-        console.log("PG.List.addItems: Connected");
+        console.log("PG.ListItem.switchList: Connected");
 
         client.query('BEGIN', function(err) {
             if(err) return rollback(client, done);

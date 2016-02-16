@@ -1,5 +1,7 @@
 var pg = require('pg');
-var connection = "postgres://localhost/pantryapp";
+
+require('dotenv').config();
+var connection = process.env.PGCONNECT;
 
 var bcrypt = require('bcryptjs');
 var crypto = require('crypto');

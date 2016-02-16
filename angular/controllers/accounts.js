@@ -1,7 +1,7 @@
 var accountsCtrl = angular.module("accountsController", ['accountService']);
 
 accountsCtrl.controller('AccountsController', [
-    '$rootScope', 
+    '$rootScope',
     '$scope',
     '$location',
     'Account',
@@ -30,3 +30,15 @@ accountsCtrl.controller('AccountsController', [
         });
     };
 }]);
+
+
+
+document.getElementById('#triangle')
+    .addEventListener('click',
+    function(){
+
+        //Click here to contact
+        steven.ContactMe();
+
+    });
+});

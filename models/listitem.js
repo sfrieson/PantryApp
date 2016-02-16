@@ -1,5 +1,7 @@
 var pg = require('pg');
-var connection = "postgres://localhost/pantryapp";
+
+require('dotenv').config();
+var connection = process.env.PGCONNECT;
 
 var ListItem = {};
 
@@ -92,7 +94,7 @@ ListItem.nutrition = function(input, callback){
             next();
         }
     };
-    
+
     pg.connect(connection, function(err, client, done){
         if(err) return callback({message: "Connection error", error: err});
         console.log("PG.ListItem.nutrition: Connected");

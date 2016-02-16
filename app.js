@@ -34,5 +34,7 @@ app.use('/accounts', accounts);
 
 
 // ======================= LISTENING =======================
-port = process.env.PORT || 8080;
+require('dotenv').config();
+
+port = process.env.PORT;
 app.listen(port,  function(){console.log("Listening on", port);}   );

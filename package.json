@@ -4,7 +4,8 @@
   "description": "An app for managing your food, groceries, kitchen items.",
   "main": "app.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "jasmine",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
