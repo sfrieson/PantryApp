@@ -12,9 +12,11 @@ accountsCtrl.controller('AccountsController', [
         Account){
 
     $scope.createTeam = function() {
-        Account.createTeam($scope.newTeam).then(function(){
-            $location.path('/team');
-        });
+        if(!$rootScope.user.team_id){
+            Account.createTeam($scope.newTeam).then(function(){
+                $location.path('/team');
+            });
+        }
     };
     $scope.invite = function() {
         $scope.url = "http://localhost:8080/join-team?token=" + $rootScope.user.team_id;

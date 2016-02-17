@@ -16,11 +16,6 @@ listCtrl.controller('ListsController', [
     if (!$rootScope.user) {
         $location.path('/signup');
     }
-    // Get all lists when you arrive here.
-    List.getList().then(function(response){
-        $scope.lists = response.data.lists;
-        $rootScope.user.lists = $scope.lists;
-    });
 
     // ------------- CREATE -------------
     $scope.addList = function(){

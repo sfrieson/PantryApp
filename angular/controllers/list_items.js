@@ -77,36 +77,10 @@ liCtrl.controller('ListItemsController', [
         }
     };
 
-    // $scope.saveFood = function(){
-    //     ListItem.edit($scope.listItem).then(function(response){
-    //         console.log("Move along... here's your response:", response);
-    //         $scope.listItem = null;
-    //         $scope.results = null;
-    //     });
-    // };
 
     $scope.moveToInventory = function() {
-        var inventory;
-        var next = function() {
-            ListItem.switchList(inventory, $scope.list.items).then(function(response){
-                console.log(response);
-            });
-        };
-        console.log($rootScope.user);
-        if(!$rootScope.user.lists){
-            List.getList().then(function(response){
-                console.log(response);
-                $rootScope.user.lists = response.data.lists;
-                $rootScope.user.lists.map(function(item){
-                    if (item.type === "inventory") inventory = item;
-                    next();
-                });
-            });
-        } else {
-            $rootScope.user.lists.map(function(item){
-                if (item.type === "inventory") inventory = item;
-            });
-            next();
-        }
+        ListItem.switchList($rootScope.user.inventory_id, $scope.list.items).then(function(response){
+            console.log(response);
+        });
     };
 }]);
