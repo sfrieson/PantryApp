@@ -141,6 +141,7 @@ liCtrl.controller('ListItemsController', [
     if (!$rootScope.user) {
         $location.path('/signup');
     }
+
     ListItem.getList($routeParams.id).then(function(response){
         $scope.list = response.data;
 
@@ -197,7 +198,13 @@ liCtrl.controller('ListItemsController', [
             });
         }
     };
-
+    $scope.totalNutrition = function(){
+        console.log("Calling...");
+        console.log($scope.list);
+        ListItem.nutrition($scope.list.items).then(function(response){
+            console.log(response.data);
+        });
+    };
     $scope.movingItems = function() {
         $scope.moving = !$scope.moving;
         if($scope.moving) {
@@ -420,6 +427,9 @@ liFactory.factory('ListItem', ['$http', function($http){
         return $http.get('/lists/items/find?name=' + name);
     };
     ListItem.nutrition = function(ndb_no) {
+        if(typeof ndb_no !== "string") {
+            return $http.post('/lists/items/nutrition', {ndb_no: ndb_no});
+        }
         return $http.get('/lists/items/nutrition?ndb_no=' + ndb_no);
     };
     // -------------------- UPDATE --------------------

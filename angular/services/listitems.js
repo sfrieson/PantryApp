@@ -17,6 +17,9 @@ liFactory.factory('ListItem', ['$http', function($http){
         return $http.get('/lists/items/find?name=' + name);
     };
     ListItem.nutrition = function(ndb_no) {
+        if(typeof ndb_no !== "string") {
+            return $http.post('/lists/items/nutrition', {ndb_no: ndb_no});
+        }
         return $http.get('/lists/items/nutrition?ndb_no=' + ndb_no);
     };
     // -------------------- UPDATE --------------------

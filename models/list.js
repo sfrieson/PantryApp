@@ -102,8 +102,6 @@ List.getInventory = function(user, callback){
 // ------------------------------------------------
 // -------------------- UPDATE --------------------
 // ------------------------------------------------
-List.update = function(list, callback){
-};
 
 List.changeOwner = function(list, newOwner, callback){
     pg.connect(connection, function (err, client, done) {

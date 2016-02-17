@@ -52,6 +52,18 @@ router.get('/items/nutrition', function(req,res){
     });
 });
 
+//find alternative to using post.
+//Need array in request
+router.post('/items/nutrition', function(req,res){
+    ListItem.nutrition(req.body.ndb_no, function(err, response){
+        if (err) {
+            console.log(err);
+            return res.json({error: err});
+        }
+        res.json(response);
+    });
+});
+
 // ------------------------------------------------
 // -------------------- UPDATE --------------------
 // ------------------------------------------------

@@ -108,22 +108,15 @@ ListItem.nutrition = function(input, callback){
                     return callback({message: "Select error", error: err});
                 }
                 console.log("PG.ListItem.nutrition: Select successful");
-                // console.log(result);
                 callback(null, result.rows);
             });
         }
 
         if(typeof input === "object"){
-
-            pg.connect(connection, function(err, client, done) {
-                if(err) throw err;
-                console.log("PG.List.addItems: Connected");
-
-                client.query('BEGIN', function(err) {
-                    if(err) return rollback(client, done);
-                    process.nextTick(function() {
-                        query(input, client, done);
-                    });
+            client.query('BEGIN', function(err) {
+                if(err) return rollback(client, done);
+                process.nextTick(function() {
+                    query(input, client, done);
                 });
             });
         }

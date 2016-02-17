@@ -20,6 +20,7 @@ liCtrl.controller('ListItemsController', [
     if (!$rootScope.user) {
         $location.path('/signup');
     }
+
     ListItem.getList($routeParams.id).then(function(response){
         $scope.list = response.data;
 
@@ -76,7 +77,13 @@ liCtrl.controller('ListItemsController', [
             });
         }
     };
-
+    $scope.totalNutrition = function(){
+        console.log("Calling...");
+        console.log($scope.list);
+        ListItem.nutrition($scope.list.items).then(function(response){
+            console.log(response.data);
+        });
+    };
     $scope.movingItems = function() {
         $scope.moving = !$scope.moving;
         if($scope.moving) {
