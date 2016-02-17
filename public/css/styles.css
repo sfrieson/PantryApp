@@ -37,14 +37,21 @@ a, a:active, a:visited  {
     text-decoration: none;
     color: white;
 }
+.link {
+    cursor: pointer;
+}
 .flex-container {
     flex-wrap: wrap;
 }
 #signup {
-    /*align-items: center;*/
     border-radius: 8px;
     overflow: hidden;
-    /*margin: 50px auto;*/
+    background-color: white;
+    box-shadow: 0 5px 5px rgba(0,0,0, .5);
+}
+#signup h1 {
+    margin: 10px;
+    font-size: 1.5em;
 }
 
 *[class*='md-whiteframe'] {

@@ -29,6 +29,10 @@ app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $md
             templateUrl: '/views/partials/list.html',
             controller: 'ListItemsController'
         })
+        .when('/inventory/:id', {
+            templateUrl: '/views/partials/inventory.html',
+            controller: 'ListItemsController'
+        })
         .when('/team', {
             templateUrl: '/views/partials/team.html',
             controller: 'ListItemsController'
@@ -53,7 +57,7 @@ app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $md
 var accountsCtrl = angular.module("accountsController", ['accountService']);
 
 accountsCtrl.controller('AccountsController', [
-    '$rootScope', 
+    '$rootScope',
     '$scope',
     '$location',
     'Account',
@@ -266,6 +270,13 @@ listCtrl.controller('ListsController', [
             $scope.list.items = $scope.list.items || [];
         });
     };
+    $scope.clickList = function(list) {
+        if(list.type === "inventory") {
+            $location.path('/inventory/' + list.id);
+        } else {
+            $location.path('/lists/' + list.id);
+        }
+    };
     // ------------- UPDATE -------------
     // ------------- DESTROY -------------
 
@@ -351,6 +362,7 @@ function($rootScope, $scope, $location, $cookies, Account){
     $rootScope.title = "Pantry App";
     Account.getByToken( $cookies.get('pantry_app_t') ).then(function(response){
         $rootScope.user = response.data;
+        console.log($rootScope.user);
     });
 
     $rootScope.setUser = function(user) {

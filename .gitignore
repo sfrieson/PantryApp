@@ -34,3 +34,6 @@ node_modules
 
 # Environment Variables
 .env
+
+# Design Files
+design

@@ -38,6 +38,13 @@ listCtrl.controller('ListsController', [
             $scope.list.items = $scope.list.items || [];
         });
     };
+    $scope.clickList = function(list) {
+        if(list.type === "inventory") {
+            $location.path('/inventory/' + list.id);
+        } else {
+            $location.path('/lists/' + list.id);
+        }
+    };
     // ------------- UPDATE -------------
     // ------------- DESTROY -------------
 

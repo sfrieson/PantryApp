@@ -30,15 +30,3 @@ accountsCtrl.controller('AccountsController', [
         });
     };
 }]);
-
-
-
-document.getElementById('#triangle')
-    .addEventListener('click',
-    function(){
-
-        //Click here to contact
-        steven.ContactMe();
-
-    });
-});

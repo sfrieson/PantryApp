@@ -146,7 +146,17 @@ Account.findByToken = function(token, callback){
             if(err){return callback({message: "Token not found", error: err});}
             console.log("PG.Account: User found by Token");
             var user = result.rows[0];
-            callback(null, user);
+
+            //Get all their lists
+            List.getAll(user, function(err, response){
+                user.lists = response;
+                response.map(function(item){
+                    if(item.type==="inventory"){
+                        user.inventory_id = item.id;
+                    }
+                });
+                callback(null, user);
+            });
         });
     });
 };

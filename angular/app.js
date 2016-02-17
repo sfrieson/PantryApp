@@ -29,6 +29,10 @@ app.config(['$routeProvider', '$mdThemingProvider', function($routeProvider, $md
             templateUrl: '/views/partials/list.html',
             controller: 'ListItemsController'
         })
+        .when('/inventory/:id', {
+            templateUrl: '/views/partials/inventory.html',
+            controller: 'ListItemsController'
+        })
         .when('/team', {
             templateUrl: '/views/partials/team.html',
             controller: 'ListItemsController'

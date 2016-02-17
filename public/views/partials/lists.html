@@ -10,7 +10,7 @@
                 <div md-whiteframe="2">
                     <div layout="row">
                         <div flex="80">
-                            <a href="#/lists/{{list.id}}">{{list.name}}</a><br />
+                            <div class="link" ng-click="clickList(list)">{{list.name}}</div><br />
                             {{list.description}}
                         </div>
                         <div layout="column" flex="20">

@@ -1,0 +1,59 @@
+<div id="list" class="content">
+    <a href="#/lists">All Lists</a>
+    <div class="md-display-2">{{list.name}}</div>
+    {{list.description}}
+    <form ng-submit="addListItem()">
+        <md-input-container>
+            <label>New item</label>
+            <input type="text" ng-model="newListItem.name">
+        </md-input-container>
+        <md-input-container>
+            <label>Description</label>
+            <input type="text" ng-model="newListItem.desc">
+        </md-input-container>
+        <md-input-container>
+            <label>Quantity</label>
+            <input type="number" ng-model="newListItem.qty">
+        </md-input-container>
+        <md-input-container>
+            <label>Notes</label>
+            <input type="text" ng-model="newListItem.notes">
+        </md-input-container>
+        <md-input-container>
+            <input class="md-button md-raised md-primary" aria-label="Add Item" type="submit" value="Add">
+        </md-input-container>
+    </form>
+    <button class="md-button" ng-click="purchased = !purchased">All Out</button>
+    <button class="md-button" ng-show="purchased" ng-click="switchList()">Move to inventory</button>
+
+
+    <md-list>
+        <md-list-item class="items" ng-repeat="item in list.items">
+            {{item.qty}} - <span ng-click="findFood($event, item)">{{item.name}}</span>
+            <span ng-click="delete(item.id, $index)">x</span>
+        </md-list-item>
+
+        <div ng-if="results">
+            Select the food from USDA that best matches:
+            Your input: {{listItem.name}}
+            <form ng-submit="saveFood()">
+                <input type="submit" value="Select">
+                <select ng-model="listItem.ndb_no">
+                    <option ng-repeat="result in results" value="{{result.ndb_no}}">
+                        {{result.long_desc}}
+                    </option>
+                </select>
+            </form>
+        </div>
+
+        <div ng-show="nutrients">
+            <a href="javascript:;" ng-click="nutrients = !nutrients">X</a>
+            USDA info on {{listItem.name}}.<br />
+            <div ng-repeat="nutrient in nutrients">
+                <b>{{nutrient.nutrdesc}}</b> - {{nutrient.nutr_val}}{{nutrient.units}}
+            </div>
+        </div>
+            <button class="md-button" ng-click="purchased = !purchased">All Out</button>
+            <button class="md-button" ng-show="purchased" ng-click="switchList()">Move to List</button>
+    </md-list>
+</div>

@@ -114,7 +114,6 @@ ListItem.nutrition = function(input, callback){
         }
 
         if(typeof input === "object"){
-            console.log("Array-----------------");
 
             pg.connect(connection, function(err, client, done) {
                 if(err) throw err;
@@ -183,7 +182,7 @@ ListItem.switchList = function(targetList, itemArr, callback) {
     var i=0;
     var responseArr = [];
     var query = function (client, done) {
-        console.log("\nTarget list:\n", targetList, "\nitemArr:\n", itemArr, "\ni:\n", i, "\nitemArr[i]\n", itemArr[i]);
+        // console.log("\nTarget list:\n", targetList, "\nitemArr:\n", itemArr, "\ni:\n", i, "\nitemArr[i]\n", itemArr[i]);
         var text = "UPDATE list_items SET list_id = $1 WHERE id = $2";
         var data = [targetList.id, itemArr[i].id];
         client.query(text, data, function(err, response){
@@ -288,6 +287,6 @@ function sumNutrients(result, callback) {
             }
         }
     }
-    console.log(result.totals);
+    // console.log(result.totals);
     callback(null, result);
 }
