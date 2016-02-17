@@ -40,7 +40,7 @@
 
     <md-list>
         <md-list-item class="items" ng-repeat="item in list.items">
-            {{item.qty}} - <span ng-click="findFood($event, item)">{{item.name}}</span>
+            {{item.qty}} - <span ng-click="findFood($event, item)">{{item.name}}</span> | 
             <span ng-click="delete(item.id, $index)">x</span>
         </md-list-item>
 

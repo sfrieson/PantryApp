@@ -1,10 +1,11 @@
-body {
+body, html {
     background-color: #eee;
+    height: 100%;
 }
 md-toolbar {
     padding: 5px;
     display: flex;
-    /*align-items: flex-start;*/
+    align-items: flex-start;
 }
 md-toolbar.nav{
     align-items: flex-end;
