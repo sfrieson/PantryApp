@@ -76,7 +76,8 @@ ListItem.nutrition = function(input, callback){
                 var result = {list: itemsArr};
 
                 sumNutrients(result, callback);
-                // return callback(null, result);
+                // console.log(result);
+
             }
         };
 
@@ -280,6 +281,5 @@ function sumNutrients(result, callback) {
             }
         }
     }
-    // console.log(result.totals);
     callback(null, result);
 }

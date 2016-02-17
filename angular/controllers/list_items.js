@@ -77,11 +77,16 @@ liCtrl.controller('ListItemsController', [
             });
         }
     };
-    $scope.totalNutrition = function(){
+    $scope.getTotalNutrition = function(){
         console.log("Calling...");
         console.log($scope.list);
         ListItem.nutrition($scope.list.items).then(function(response){
-            console.log(response.data);
+            $scope.totalNutrition = [];
+
+            //Make object into an array for ng-repeat
+            for(var nutrient in response.data.totals) {
+                $scope.totalNutrition.push(response.data.totals[nutrient]);
+            }
         });
     };
     $scope.movingItems = function() {

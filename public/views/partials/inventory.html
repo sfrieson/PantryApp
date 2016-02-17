@@ -24,7 +24,7 @@
         </md-input-container>
     </form>
 
-    <button class="md-button md-raised md-accent" ng-click="totalNutrition()">Show Total Nutrition</button><br />
+
     <button class="md-button" ng-click="movingItems()">All Out</button>
     <form ng-submit="switchList(moveTo)" ng-if="moving">
         <md-input-container>
@@ -76,4 +76,12 @@
                 </button>
             </form>
     </md-list>
+
+
+    <!-- Total Nutrition -->
+    <button class="md-button md-raised md-accent" ng-click="getTotalNutrition()">Show Total Nutrition</button><br />
+    <md-list ng-if="totalNutrition.length">
+        <md-list-item ng-repeat="nutr in totalNutrition">{{nutr.nutrdesc}}: {{nutr.nutr_val}}{{nutr.units}}</md-list-item>
+    </md-list>
+
 </div>
