@@ -155,7 +155,7 @@ ListItem.edit = function(item, callback){
 ListItem.switch = function(item, targetList, callback){
     pg.connect(connection, function (err, client, done) {
         if(err) return callback({message:"Connection error", error: err});
-        console.log("PG.ListItem.switchList: Connected");
+        console.log("PG.ListItem.switch: Connected");
 
         var newStatus = targetList.type == "inventory" ? "In inventory." : "Needed";
         var text = "UPDATE list_items SET id= $1, status= $2 WHERE id= $3";
@@ -168,7 +168,7 @@ ListItem.switch = function(item, targetList, callback){
     });
 };
 
-ListItem.switchList = function(targetList, itemArr, callback) {
+ListItem.switchList = function(targetList_id, itemArr, callback) {
     var rollback = function(client, done) {
         client.query('ROLLBACK', function(err) {
             //If there's an error, rollback.
@@ -182,9 +182,9 @@ ListItem.switchList = function(targetList, itemArr, callback) {
     var i=0;
     var responseArr = [];
     var query = function (client, done) {
-        // console.log("\nTarget list:\n", targetList, "\nitemArr:\n", itemArr, "\ni:\n", i, "\nitemArr[i]\n", itemArr[i]);
+        // console.log("\nTarget list:\n", targetList_id, "\nitemArr:\n", itemArr, "\ni:\n", i, "\nitemArr[i]\n", itemArr[i]);
         var text = "UPDATE list_items SET list_id = $1 WHERE id = $2";
-        var data = [targetList.id, itemArr[i].id];
+        var data = [targetList_id, itemArr[i].id];
         client.query(text, data, function(err, response){
             if(err){
                 console.log("\nRecursive switching, iteration " + i + ". Error:\n", err);

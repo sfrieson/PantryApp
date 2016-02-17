@@ -77,10 +77,26 @@ liCtrl.controller('ListItemsController', [
         }
     };
 
-
+    $scope.movingItems = function() {
+        $scope.moving = !$scope.moving;
+        if($scope.moving) {
+            $scope.userLists = $rootScope.user.lists;
+        }
+    };
     $scope.moveToInventory = function() {
-        ListItem.switchList($rootScope.user.inventory_id, $scope.list.items).then(function(response){
-            console.log(response);
-        });
+        $scope.switchList($rootScope.user.inventory_id);
+    };
+    $scope.switchList = function(id) {
+        console.log(id);
+
+        if(id) {
+            console.log("moving...");
+            ListItem.switchList(id, $scope.list.items).then(function(response){
+                console.log(response);
+                 $scope.movingItems();
+            });
+        } else {
+            console.log("Delete");
+        }
     };
 }]);

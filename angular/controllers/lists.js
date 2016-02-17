@@ -16,7 +16,7 @@ listCtrl.controller('ListsController', [
     if (!$rootScope.user) {
         $location.path('/signup');
     }
-
+    $scope.lists = $rootScope.user.lists;
     // ------------- CREATE -------------
     $scope.addList = function(){
         $scope.newList.account_id = $scope.newList.account_id || $rootScope.user.id;

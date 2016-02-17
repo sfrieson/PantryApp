@@ -23,8 +23,19 @@
             <input class="md-button md-raised md-primary" aria-label="Add Item" type="submit" value="Add">
         </md-input-container>
     </form>
-    <button class="md-button" ng-click="purchased = !purchased">All Out</button>
-    <button class="md-button" ng-show="purchased" ng-click="switchList()">Move to inventory</button>
+
+    
+    <button class="md-button" ng-click="movingItems()">All Out</button>
+    <form ng-submit="switchList(moveTo)" ng-if="moving">
+        <md-input-container>
+            <md-select ng-model="moveTo" aria-label="List to move items to">
+                <md-option ng-repeat="list in userLists" value="{{list.id}}">{{list.name}}</md-option>
+            </md-select>
+        </md-input-container>
+        <button type="submit" class="md-button md-raised">
+            Move to List
+        </button>
+    </form>
 
 
     <md-list>
@@ -53,7 +64,16 @@
                 <b>{{nutrient.nutrdesc}}</b> - {{nutrient.nutr_val}}{{nutrient.units}}
             </div>
         </div>
-            <button class="md-button" ng-click="purchased = !purchased">All Out</button>
-            <button class="md-button" ng-show="purchased" ng-click="switchList()">Move to List</button>
+            <button class="md-button" ng-click="movingItems()">All Out</button>
+            <form ng-submit="switchList(moveTo)" ng-if="moving">
+                <md-input-container>
+                    <md-select ng-model="moveTo" aria-label="List to move items to">
+                        <md-option ng-repeat="list in userLists" value="{{list.id}}">{{list.name}}</md-option>
+                    </md-select>
+                </md-input-container>
+                <button type="submit" class="md-button md-raised">
+                    Move to List
+                </button>
+            </form>
     </md-list>
 </div>
