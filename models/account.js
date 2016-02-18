@@ -148,15 +148,17 @@ Account.findByToken = function(token, callback){
             var user = result.rows[0];
 
             //Get all their lists
-            List.getAll(user, function(err, response){
-                user.lists = response;
-                response.map(function(item){
-                    if(item.type==="inventory"){
-                        user.inventory_id = item.id;
-                    }
+            if(user){
+                List.getAll(user, function(err, response){
+                    user.lists = response;
+                    response.map(function(item){
+                        if(item.type==="inventory"){
+                            user.inventory_id = item.id;
+                        }
+                    });
+                    callback(null, user);
                 });
-                callback(null, user);
-            });
+            }
         });
     });
 };

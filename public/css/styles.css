@@ -11,8 +11,14 @@ md-toolbar.nav{
     align-items: flex-end;
 }
 section.bg {
-    background: url('/images/breakfast.jpg');
-    background-size: cover;
+    /*background: url('/images/breakfast.jpg');
+    background-size: cover;*/
+
+    background: url('/images/fruit-01.png');
+    background-repeat: repeat;
+
+
+
     display: flex;
     align-items: center;
     justify-content: center;
