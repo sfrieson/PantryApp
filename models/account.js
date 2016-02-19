@@ -113,12 +113,14 @@ Account.login = function(credentials, callback) {
             if(!user){return callback({message: "incorrect username"});}
             console.log("PG.Account: User found");
 
-
-            if(bcrypt.compareSync(credentials.password, user.passwordhash)){
+            if(!bcrypt.compareSync(credentials.password, user.passwordhash)){
+                done();
+                callback({error: "Incorrect password..."});
+            } else {
                 //Password matches! Now create a token.
                 var buffer = (crypto.randomBytes(128)).toString('hex');
 
-                result.rows[0].token = buffer;
+                user.token = buffer;
 
                 var text = "UPDATE accounts SET token = $1 WHERE id = $2 ";
                 client.query(text, [buffer, result.rows[0].id], function(err, response){
@@ -126,10 +128,15 @@ Account.login = function(credentials, callback) {
                     if (err) {console.log(err);}
                     console.log("PG.Account: Token written");
                 });
-                callback(null, {user: result.rows[0]});
-            } else {
-                done();
-                callback({error: "Incorrect password..."});
+
+                List.getAll(user, function(err, response){
+                    if(err) return console.log(err);
+                    console.log("PG.Account.Login: Lists put on user.");
+                    user.lists=response;
+                    callback(null, {user: user});
+                });
+
+
             }
         });
     });
