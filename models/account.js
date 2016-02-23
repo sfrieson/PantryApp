@@ -153,7 +153,7 @@ Account.findByToken = function(token, callback){
             if(err){return callback({message: "Token not found", error: err});}
             console.log("PG.Account: User found by Token");
             var user = result.rows[0];
-
+            console.log("findByToken user:", user);
             //Get all their lists
             if(user){
                 List.getAll(user, function(err, response){
@@ -165,6 +165,8 @@ Account.findByToken = function(token, callback){
                     });
                     callback(null, user);
                 });
+            } else {
+                callback({message: "No user found"});
             }
         });
     });

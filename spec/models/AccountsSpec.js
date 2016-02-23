@@ -9,13 +9,14 @@ describe("Account", function(){
     var credentials = {username: 'steven', password: 'steven'};
 
     describe("creating a new user", function(){
-        beforeEach(function(done){
+        beforeAll(function(done){
             Account.new(userObj, function(err, response){
                 user = response;
+                console.log("\nSpec new user error:\n", err);
                 done();
             });
         });
-        afterEach(function(done){
+        afterAll(function(done){
             Account.delete(user.id, function(){
                 done();
             });

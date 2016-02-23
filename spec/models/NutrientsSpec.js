@@ -26,7 +26,7 @@ describe("Nutrients", function(){
 
     describe("for one item", function(){
         var info;
-        beforeEach(function(done){
+        beforeAll(function(done){
             ListItem.nutrition(item.ndb_no, function(err, response){
                 info = response;
                 done();
@@ -40,7 +40,7 @@ describe("Nutrients", function(){
     });
 
     describe("for an array of items", function(){
-        beforeEach(function(done){
+        beforeAll(function(done){
             ListItem.nutrition(itemArr, function(err, response){
                 info = response;
                 done();

@@ -5,8 +5,10 @@ function($rootScope, $scope, $location, $cookies, Account){
     $rootScope.user = null;
     $rootScope.title = "Pantry App";
     Account.getByToken( $cookies.get('pantry_app_t') ).then(function(response){
-        $rootScope.user = response.data;
-        console.log($rootScope.user);
+        if(response.data.lists){
+            $rootScope.user = response.data;
+            console.log($rootScope.user);
+        }
     });
 
     $rootScope.setUser = function(user) {

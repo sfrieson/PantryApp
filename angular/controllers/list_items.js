@@ -20,7 +20,7 @@ liCtrl.controller('ListItemsController', [
     if (!$rootScope.user) {
         $location.path('/signup');
     }
-
+    $scope.checked=["applesauce"];
     ListItem.getList($routeParams.id).then(function(response){
         $scope.list = response.data;
 

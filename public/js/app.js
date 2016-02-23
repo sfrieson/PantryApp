@@ -141,7 +141,7 @@ liCtrl.controller('ListItemsController', [
     if (!$rootScope.user) {
         $location.path('/signup');
     }
-
+    $scope.checked=["applesauce"];
     ListItem.getList($routeParams.id).then(function(response){
         $scope.list = response.data;
 
@@ -360,8 +360,10 @@ function($rootScope, $scope, $location, $cookies, Account){
     $rootScope.user = null;
     $rootScope.title = "Pantry App";
     Account.getByToken( $cookies.get('pantry_app_t') ).then(function(response){
-        $rootScope.user = response.data;
-        console.log($rootScope.user);
+        if(response.data.lists){
+            $rootScope.user = response.data;
+            console.log($rootScope.user);
+        }
     });
 
     $rootScope.setUser = function(user) {
